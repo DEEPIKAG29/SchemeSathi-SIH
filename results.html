@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="results-header">
+  <div class="header-text">
+    <h2>🎯 WE FOUND {{ schemes|length }} SCHEMES FOR YOU</h2>
+    <p class="profile-summary-tags">
+      <span>{{ profile.category }}</span> • 
+      <span>{{ profile.state }}</span> • 
+      <span>₹{{ profile.income }}</span> • 
+      <span>{{ profile.sector }}</span> • 
+      <span>{{ profile.area }}</span>
+    </p>
+  </div>
+  <a href="{{ url_for('profile') }}" class="btn-outline">Edit Profile ⚙</a>
+</div>
+
+<!-- FILTER & SORT CONTROLS -->
+<div class="card controls-strip">
+  <div class="control-item">
+    <label for="filter-type">Filter by Benefit:</label>
+    <select id="filter-type" onchange="applyFilterAndSort()">
+      <option value="All">All Benefits</option>
+      <option value="Subsidy">Subsidies & Grants</option>
+      <option value="Loan">Loans & Working Capital</option>
+      <option value="Training">Skill & Training</option>
+    </select>
+  </div>
+
+  <div class="control-item">
+    <label for="sort-type">Sort By:</label>
+    <select id="sort-type" onchange="applyFilterAndSort()">
+      <option value="match_desc">Match Score (Highest First)</option>
+      <option value="match_asc">Match Score (Lowest First)</option>
+      <option value="income_desc">Income Ceiling (High to Low)</option>
+      <option value="name_asc">Scheme Name (A-Z)</option>
+    </select>
+  </div>
+</div>
+
+{% if schemes %}
+  <!-- Container where JS will dynamically re-render or filter schemes -->
+  <div id="schemes-display-area">
+    
+    <!-- TOP MATCH HIGHLIGHT CARD -->
+    {% set top_scheme = schemes[0] %}
+    <div class="card top-match-card scheme-item-card" data-id="{{ top_scheme.id }}" data-score="{{ top_scheme.score }}" data-income="{{ top_scheme.max_income }}" data-name="{{ top_scheme.name }}" data-benefit="{{ top_scheme.subsidy_rate }} {{ top_scheme.benefits }}">
+      <div class="top-badge">⭐ TOP MATCH</div>
+      <div class="top-match-body">
+        <div>
+          <h3>{{ top_scheme.name }}</h3>
+          <p class="ministry-text">{{ top_scheme.ministry }}</p>
+          
+          <div class="verification-checks">
+            {% for criterion, passed in top_scheme.checks.items() %}
+              <span class="check-pill {% if passed %}pass{% else %}fail{% endif %}">
+                {% if passed %}✓{% else %}✕{% endif %} {{ criterion }}
+              </span>
+            {% endfor %}
+            {% if top_scheme.nlp_bonus > 0 %}
+              <span class="check-pill pass">✨ +{{ top_scheme.nlp_bonus }}% NLP Text Relevance</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="score-box">
+          <div class="score-circle">{{ top_scheme.score }}%</div>
+          <span class="score-tag">GREAT MATCH</span>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button type="button" class="btn-outline" onclick="openWhyMatch('{{ top_scheme.id }}')">WHY THIS MATCH?</button>
+        <a href="{{ url_for('scheme_details', scheme_id=top_scheme.id) }}" class="btn-primary">EXPLORE &rarr;</a>
+      </div>
+    </div>
+
+    <!-- OTHER MATCHES GRID -->
+    {% if schemes|length > 1 %}
+      <h3 class="section-subtitle" id="other-schemes-title">OTHER RECOMMENDATIONS</h3>
+      <div class="schemes-grid" id="other-schemes-grid">
+        {% for scheme in schemes[1:] %}
+          <div class="card scheme-grid-card scheme-item-card" data-id="{{ scheme.id }}" data-score="{{ scheme.score }}" data-income="{{ scheme.max_income }}" data-name="{{ scheme.name }}" data-benefit="{{ scheme.subsidy_rate }} {{ scheme.benefits }}">
+            <div class="grid-card-score">{{ scheme.score }}% MATCH</div>
+            <h4>{{ scheme.name }}</h4>
+            <p class="ministry-text">{{ scheme.ministry }}</p>
+            <p class="benefit-brief">{{ scheme.subsidy_rate }}</p>
+            
+            <div class="grid-card-actions">
+              <button type="button" class="btn-text" onclick="openWhyMatch('{{ scheme.id }}')">Why match?</button>
+              <a href="{{ url_for('scheme_details', scheme_id=scheme.id) }}" class="btn-outline-sm">Explore &rarr;</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+  </div>
+
+  <div class="compare-cta-strip">
+    <a href="{{ url_for('compare') }}" class="btn-primary">COMPARE SCHEMES SIDE-BY-SIDE &rarr;</a>
+  </div>
+
+{% else %}
+  <div class="card empty-card">
+    <h3>No matching schemes found</h3>
+    <p>Try adjusting your category, annual income, or sector parameters in the profile form.</p>
+    <a href="{{ url_for('profile') }}" class="btn-primary">Return to Profile</a>
+  </div>
+{% endif %}
+
+<!-- PAGE 5: WHY THIS MATCH POPUP -->
+<div id="why-modal-backdrop" class="modal-backdrop" style="display: none;" onclick="closeWhyMatch()">
+  <div class="modal-window card" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 id="modal-scheme-title">Why Match?</h3>
+      <button class="close-btn" onclick="closeWhyMatch()">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="modal-score-banner">
+        <span id="modal-score-val" class="score-pill">0%</span>
+        <p id="modal-explanation" class="explanation-text"></p>
+      </div>
+
+      <h4 class="breakdown-title">Eligibility Criteria Breakdown</h4>
+      <div id="modal-checks-grid" class="checks-breakdown-grid"></div>
+    </div>
+  </div>
+</div>
+
+<script id="schemes-data-json" type="application/json">
+  {{ schemes|tojson|safe }}
+</script>
+
+<script>
+  const schemesData = JSON.parse(document.getElementById('schemes-data-json').textContent);
+
+  function openWhyMatch(schemeId) {
+    if (!schemesData) return;
+    const targetScheme = schemesData.find(s => s.id === schemeId);
+    if (!targetScheme) return;
+
+    document.getElementById('modal-scheme-title').innerText = targetScheme.name;
+    document.getElementById('modal-score-val').innerText = targetScheme.score + '% Match';
+    document.getElementById('modal-explanation').innerText = targetScheme.explanation;
+
+    const checksGrid = document.getElementById('modal-checks-grid');
+    checksGrid.innerHTML = '';
+
+    for (const [key, passed] of Object.entries(targetScheme.checks)) {
+      const item = document.createElement('div');
+      item.className = 'check-item ' + (passed ? 'pass-item' : 'fail-item');
+      item.innerHTML = '<span>' + (passed ? '✓' : '✕') + '</span> <strong>' + key + '</strong>: ' + (passed ? 'Matched' : 'Not Met');
+      checksGrid.appendChild(item);
+    }
+
+    document.getElementById('why-modal-backdrop').style.display = 'flex';
+  }
+
+  function closeWhyMatch() {
+    document.getElementById('why-modal-backdrop').style.display = 'none';
+  }
+
+  // Real-time Client Filtering & Sorting
+  function applyFilterAndSort() {
+    const filterVal = document.getElementById('filter-type').value.toLowerCase();
+    const sortVal = document.getElementById('sort-type').value;
+    const items = Array.from(document.querySelectorAll('.scheme-item-card'));
+    const otherGrid = document.getElementById('other-schemes-grid');
+
+    // 1. Filtering
+    items.forEach(card => {
+      const benefitText = card.getAttribute('data-benefit').toLowerCase();
+      if (filterVal === 'all') {
+        card.style.display = '';
+      } else if (filterVal === 'subsidy' && (benefitText.includes('subsidy') || benefitText.includes('grant'))) {
+        card.style.display = '';
+      } else if (filterVal === 'loan' && (benefitText.includes('loan') || benefitText.includes('credit'))) {
+        card.style.display = '';
+      } else if (filterVal === 'training' && benefitText.includes('training')) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    // 2. Sorting (Applied to grid cards)
+    if (otherGrid) {
+      const gridCards = Array.from(otherGrid.querySelectorAll('.scheme-grid-card'));
+      gridCards.sort((a, b) => {
+        if (sortVal === 'match_desc') return Number(b.dataset.score) - Number(a.dataset.score);
+        if (sortVal === 'match_asc') return Number(a.dataset.score) - Number(b.dataset.score);
+        if (sortVal === 'income_desc') return Number(b.dataset.income) - Number(a.dataset.income);
+        if (sortVal === 'name_asc') return a.dataset.name.localeCompare(b.dataset.name);
+        return 0;
+      });
+      gridCards.forEach(c => otherGrid.appendChild(c));
+    }
+  }
+</script>
+{% endblock %}

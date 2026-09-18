@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="compare-container">
+  <div class="back-nav">
+    <a href="{{ url_for('results') }}">&larr; Back to Results</a>
+  </div>
+
+  <h2>COMPARE YOUR OPTIONS</h2>
+  <p class="subtitle">Evaluate criteria, funding tiers, and requirements side by side.</p>
+
+  <div class="compare-selectors">
+    <div class="select-box">
+      <label>Scheme A:</label>
+      <select id="select-scheme-a" onchange="updateComparison()">
+        {% for s in schemes %}
+          <option value="{{ s.id }}" {% if loop.index == 1 %}selected{% endif %}>{{ s.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="select-box">
+      <label>Scheme B:</label>
+      <select id="select-scheme-b" onchange="updateComparison()">
+        {% for s in schemes %}
+          <option value="{{ s.id }}" {% if loop.index == 2 %}selected{% endif %}>{{ s.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <div class="card table-wrapper">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Attribute</th>
+          <th id="col-title-a">Scheme A</th>
+          <th id="col-title-b">Scheme B</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Ministry</strong></td>
+          <td id="comp-ministry-a">-</td>
+          <td id="comp-ministry-b">-</td>
+        </tr>
+        <tr>
+          <td><strong>Eligible Categories</strong></td>
+          <td id="comp-cat-a">-</td>
+          <td id="comp-cat-b">-</td>
+        </tr>
+        <tr>
+          <td><strong>Income Ceiling</strong></td>
+          <td id="comp-income-a">-</td>
+          <td id="comp-income-b">-</td>
+        </tr>
+        <tr>
+          <td><strong>Targeted Sectors</strong></td>
+          <td id="comp-sectors-a">-</td>
+          <td id="comp-sectors-b">-</td>
+        </tr>
+        <tr>
+          <td><strong>Subsidy & Loan Support</strong></td>
+          <td id="comp-subsidy-a">-</td>
+          <td id="comp-subsidy-b">-</td>
+        </tr>
+        <tr>
+          <td><strong>Mandatory Documents</strong></td>
+          <td id="comp-docs-a">-</td>
+          <td id="comp-docs-b">-</td>
+        </tr>
+        <tr>
+          <td><strong>Application Mode</strong></td>
+          <td id="comp-mode-a">-</td>
+          <td id="comp-mode-b">-</td>
+        </tr>
+        <tr>
+          <td><strong>Action</strong></td>
+          <td><a id="link-a" href="#" class="btn-primary">View Details</a></td>
+          <td><a id="link-b" href="#" class="btn-primary">View Details</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Safe JSON container to avoid IDE linter errors -->
+<script id="compare-data-json" type="application/json">
+  {{ schemes|tojson|safe }}
+</script>
+
+<script>
+  const allSchemes = JSON.parse(document.getElementById('compare-data-json').textContent);
+
+  function updateComparison() {
+    if (!allSchemes || allSchemes.length === 0) return;
+
+    const selectA = document.getElementById('select-scheme-a');
+    const selectB = document.getElementById('select-scheme-b');
+    if (!selectA || !selectB) return;
+
+    const idA = selectA.value;
+    const idB = selectB.value;
+
+    const sA = allSchemes.find(function(s) { return s.id === idA; }) || allSchemes[0];
+    const sB = allSchemes.find(function(s) { return s.id === idB; }) || (allSchemes[1] || allSchemes[0]);
+
+    if (!sA || !sB) return;
+
+    document.getElementById('col-title-a').innerText = sA.name;
+    document.getElementById('col-title-b').innerText = sB.name;
+
+    document.getElementById('comp-ministry-a').innerText = sA.ministry;
+    document.getElementById('comp-ministry-b').innerText = sB.ministry;
+
+    document.getElementById('comp-cat-a').innerText = sA.categories.join(', ');
+    document.getElementById('comp-cat-b').innerText = sB.categories.join(', ');
+
+    document.getElementById('comp-income-a').innerText = 'Up to ₹' + Number(sA.max_income).toLocaleString();
+    document.getElementById('comp-income-b').innerText = 'Up to ₹' + Number(sB.max_income).toLocaleString();
+
+    document.getElementById('comp-sectors-a').innerText = sA.sectors.join(', ');
+    document.getElementById('comp-sectors-b').innerText = sB.sectors.join(', ');
+
+    document.getElementById('comp-subsidy-a').innerText = sA.subsidy_rate;
+    document.getElementById('comp-subsidy-b').innerText = sB.subsidy_rate;
+
+    document.getElementById('comp-docs-a').innerText = sA.documents.length + ' documents needed';
+    document.getElementById('comp-docs-b').innerText = sB.documents.length + ' documents needed';
+
+    document.getElementById('comp-mode-a').innerText = sA.application_mode;
+    document.getElementById('comp-mode-b').innerText = sB.application_mode;
+
+    document.getElementById('link-a').href = '/scheme/' + sA.id;
+    document.getElementById('link-b').href = '/scheme/' + sB.id;
+  }
+
+  document.addEventListener('DOMContentLoaded', updateComparison);
+</script>
+{% endblock %}

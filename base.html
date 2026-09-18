@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SchemeSathi.ai | Smart Scheme Discovery</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="{{ url_for('home') }}" class="brand">SchemeSathi<span>.ai</span></a>
+    <div class="nav-links">
+      <a href="{{ url_for('about') }}">About</a>
+      <a href="{{ url_for('about') }}">How It Works</a>
+      <a href="{{ url_for('compare') }}">Compare</a>
+      <a href="{{ url_for('profile') }}" class="btn-primary" style="padding: 0.5rem 1.2rem; font-size: 0.9rem;">Find Schemes</a>
+      <div class="lang-switch-wrapper">
+        <button type="button" class="btn-lang" id="lang-toggle-btn" onclick="toggleLanguage()">
+    🌐      <span id="current-lang-text">हिन्दी</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    {% block content %}
+    <!-- Specific page content loads here -->
+    {% endblock %}
+  </main>
+
+  <footer>
+    <p>SchemeSathi.ai &copy; 2026 — Built by Team Diamond for SIH</p>
+  </footer>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

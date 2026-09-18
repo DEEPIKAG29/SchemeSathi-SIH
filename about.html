@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="about-container">
+  <div class="card mb-2">
+    <span class="badge">Problem Context</span>
+    <h2>The Problem</h2>
+    <p>
+      Marginalized and grassroots entrepreneurs (SC/ST, women, rural artisans, micro-retailers) struggle to discover and access verified government subsidies. Schemes exist across dozens of state and central ministries with fragmented portals, dense legal jargon, and opaque eligibility criteria.
+    </p>
+  </div>
+
+  <div class="card mb-2">
+    <span class="badge">Our Innovation</span>
+    <h2>The SchemeSathi.ai Solution</h2>
+    <p>
+      SchemeSathi provides structured, rule-based algorithmic matching paired with automated criteria explanation. Entrepreneurs input standard demographic and business parameters and immediately receive verified schemes ranked by objective compatibility.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>System Architecture Flow</h2>
+    <div class="arch-flow">
+      <div class="arch-step">
+        <span class="arch-tag">Input</span>
+        <strong>1. User Profile</strong>
+        <p>Demographics, Category, Income, Sector, Area</p>
+      </div>
+      <div class="arch-arrow">&darr;</div>
+      <div class="arch-step">
+        <span class="arch-tag">Database</span>
+        <strong>2. Verified Scheme DB</strong>
+        <p>Central & State initiative rules dataset</p>
+      </div>
+      <div class="arch-arrow">&darr;</div>
+      <div class="arch-step">
+        <span class="arch-tag">Engine</span>
+        <strong>3. Eligibility & Weighted Scoring</strong>
+        <p>Dynamic scoring across 7 categorical weights</p>
+      </div>
+      <div class="arch-arrow">&darr;</div>
+      <div class="arch-step">
+        <span class="arch-tag">Output</span>
+        <strong>4. Explainable Recommendations</strong>
+        <p>Score %, criteria checklist, comparison table</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

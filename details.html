@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if scheme %}
+<div class="details-wrapper">
+  <div class="back-nav">
+    <a href="{{ url_for('results') }}">&larr; Back to Results</a>
+  </div>
+
+  <div class="card details-hero">
+    <div class="hero-left">
+      <h1>{{ scheme.name }}</h1>
+      <p class="ministry-text">{{ scheme.ministry }}</p>
+    </div>
+    <div class="official-cta">
+      <a href="{{ scheme.official_url }}" target="_blank" class="btn-primary">VISIT OFFICIAL PORTAL &rarr;</a>
+    </div>
+  </div>
+
+  <div class="details-grid">
+    <div class="card">
+      <h3>Key Benefits & Subsidies</h3>
+      <p class="highlight-info">{{ scheme.subsidy_rate }}</p>
+      <p>{{ scheme.benefits }}</p>
+    </div>
+
+    <div class="card">
+      <h3>Application Details</h3>
+      <p><strong>Application Mode:</strong> {{ scheme.application_mode }}</p>
+      <p><strong>Allowed Setup:</strong> {{ scheme.business_status|join(', ') }}</p>
+      <p><strong>Covered Areas:</strong> {{ scheme.area|join(', ') }}</p>
+    </div>
+  </div>
+
+  <!-- Mandatory Required Documents with Print / PDF Checklist Button -->
+  <div class="card mt-2">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+      <h3 style="margin: 0;">Mandatory Required Documents</h3>
+      <button type="button" class="btn-print" onclick="window.print()">
+        🖨️ Print / Save Checklist (PDF)
+      </button>
+    </div>
+    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+      Carry self-attested photocopies along with original documents when visiting the verification center or bank.
+    </p>
+    <ul class="documents-list printable-checklist">
+      {% for doc in scheme.documents %}
+        <li><strong>{{ doc }}</strong> — <i>Original + 2 photocopies</i></li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="card mt-2">
+    <h3>Targeted Industry Sectors</h3>
+    <div class="tags-container">
+      {% for sec in scheme.sectors %}
+        <span class="sector-tag">{{ sec }}</span>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="card empty-card">
+  <h3>Scheme not found</h3>
+  <a href="{{ url_for('results') }}" class="btn-primary">Back to Results</a>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="hero-section">
+  <span class="badge" data-i18n="hero_badge">Built for Marginalized Entrepreneurs</span>
+  <h1 class="hero-title" data-i18n="hero_title">FIND THE RIGHT GOVERNMENT SCHEME FOR YOUR BUSINESS</h1>
+  <p class="hero-subtitle" data-i18n="hero_sub">Simple. Personalized. Government-backed.</p>
+  
+  <div class="cta-wrapper">
+    <a href="{{ url_for('profile') }}" class="btn-primary btn-large" data-i18n="btn_find_schemes">FIND MY SCHEMES &rarr;</a>
+  </div>
+</div>
+
+<div class="features-grid">
+  <div class="card feature-card">
+    <div class="feature-icon">🔍</div>
+    <h3 data-i18n="card_discover">Discover Schemes</h3>
+    <p data-i18n="card_discover_p">Browse verified Central and State initiatives mapped directly to your business category.</p>
+  </div>
+  
+  <div class="card feature-card">
+    <div class="feature-icon">✓</div>
+    <h3 data-i18n="card_eligibility">Check Eligibility</h3>
+    <p data-i18n="card_eligibility_p">Instant rule-based scoring based on your age, category, sector, and location criteria.</p>
+  </div>
+  
+  <div class="card feature-card">
+    <div class="feature-icon">⚖️</div>
+    <h3 data-i18n="card_compare">Compare Schemes</h3>
+    <p data-i18n="card_compare_p">Evaluate benefits, subsidies, loan terms, and application channels side by side.</p>
+  </div>
+</div>
+{% endblock %}
