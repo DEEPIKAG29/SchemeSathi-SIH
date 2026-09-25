@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="form-wrapper">
+    <!-- Stepper Top Bar Indicator -->
+    <div class="progress-bar-container">
+        <div class="progress-step active" id="indicator-1">
+            <span>1</span> About You
+        </div>
+        <div class="progress-line" id="line-1"></div>
+        
+        <div class="progress-step" id="indicator-2">
+            <span>2</span> Business
+        </div>
+        <div class="progress-line" id="line-2"></div>
+        
+        <div class="progress-step" id="indicator-3">
+            <span>3</span> Requirements
+        </div>
+    </div>
+
+    <!-- Multi-Step Registration Form -->
+    <form id="scheme-profile-form" method="POST" action="/profile">
+        <!-- Step 1: Personal Details -->
+        <div class="form-step-card card" id="step-1">
+            <h2>About You</h2>
+            <p class="subtitle">Tell us about your background to determine basic qualification.</p>
+
+            <div class="form-group">
+                <label>Age</label>
+                <input type="number" name="age" value="24" min="18" max="75" required>
+            </div>
+
+            <div class="form-group">
+                <label>Gender</label>
+                <select name="gender">
+                    <option value="All">All / Prefer not to say</option>
+                    <option value="Female">Female</option>
+                    <option value="Male">Male</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>State</label>
+                <select name="state">
+                    <option value="Andhra Pradesh">Andhra Pradesh</option>
+                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                    <option value="Assam">Assam</option>
+                    <option value="Bihar">Bihar</option>
+                    <option value="Chhattisgarh">Chhattisgarh</option>
+                    <option value="Delhi">Delhi (NCT)</option>
+                    <option value="Goa">Goa</option>
+                    <option value="Gujarat">Gujarat</option>
+                    <option value="Haryana">Haryana</option>
+                    <option value="Himachal Pradesh">Himachal Pradesh</option>
+                    <option value="Jammu & Kashmir">Jammu & Kashmir</option>
+                    <option value="Jharkhand">Jharkhand</option>
+                    <option value="Karnataka">Karnataka</option>
+                    <option value="Kerala">Kerala</option>
+                    <option value="Madhya Pradesh">Madhya Pradesh</option>
+                    <option value="Maharashtra">Maharashtra</option>
+                    <option value="Manipur">Manipur</option>
+                    <option value="Meghalaya">Meghalaya</option>
+                    <option value="Mizoram">Mizoram</option>
+                    <option value="Nagaland">Nagaland</option>
+                    <option value="Odisha">Odisha</option>
+                    <option value="Punjab">Punjab</option>
+                    <option value="Rajasthan">Rajasthan</option>
+                    <option value="Sikkim">Sikkim</option>
+                    <option value="Tamil Nadu">Tamil Nadu</option>
+                    <option value="Telangana">Telangana</option>
+                    <option value="Tripura">Tripura</option>
+                    <option value="Uttar Pradesh">Uttar Pradesh</option>
+                    <option value="Uttarakhand" selected>Uttarakhand</option>
+                    <option value="West Bengal">West Bengal</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Category</label>
+                <select name="category">
+                    <option value="General">General</option>
+                    <option value="OBC">OBC</option>
+                    <option value="SC">SC</option>
+                    <option value="ST">ST</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Annual Family Income (₹)</label>
+                <input type="number" name="income" value="300000" min="0" step="10000" required>
+            </div>
+
+            <div class="form-actions right">
+                <button type="button" class="btn-primary" onclick="goToStep(2)">Next Step &rarr;</button>
+            </div>
+        </div>
+
+        <!-- Step 2: Business Details -->
+        <div class="form-step-card card" id="step-2" style="display: none;">
+            <h2>Your Business</h2>
+            <p class="subtitle">Enter details about your current enterprise or idea.</p>
+
+            <div class="form-group">
+                <label>Business Status</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="business_status" value="New" checked> New Idea</label>
+                    <label><input type="radio" name="business_status" value="Existing"> Existing Enterprise</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Sector</label>
+                <select name="sector">
+                    <option value="Agro-processing">Agro-processing</option>
+                    <option value="Coir">Coir</option>
+                    <option value="Handicraft">Handicraft</option>
+                    <option value="Handloom">Handloom</option>
+                    <option value="Manufacturing" selected>Manufacturing</option>
+                    <option value="Retail">Retail</option>
+                    <option value="Rural industry">Rural industry</option>
+                    <option value="Services">Services</option>
+                    <option value="Traditional industries">Traditional industries</option>
+                    <option value="Village industries">Village industries</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Business Stage</label>
+                <select name="business_stage">
+                    <option value="Starting">Starting</option>
+                    <option value="Scaling">Scaling / Expanding</option>
+                </select>
+            </div>
+
+            <div class="form-actions space-between">
+                <button type="button" class="btn-outline" onclick="goToStep(1)">&larr; Back</button>
+                <button type="button" class="btn-primary" onclick="goToStep(3)">Next Step &rarr;</button>
+            </div>
+        </div>
+
+        <!-- Step 3: Special Requirements -->
+        <div class="form-step-card card" id="step-3" style="display: none;">
+            <h2>Your Requirements</h2>
+            <p class="subtitle">Final parameters to pinpoint specialized incentives.</p>
+
+            <div class="form-group">
+                <label>Area / Location Type</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="area" value="Rural" checked> Rural</label>
+                    <label><input type="radio" name="area" value="Urban"> Urban</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Disability / PwD Status</label>
+                <select name="disability">
+                    <option value="No">No</option>
+                    <option value="Yes">Yes</option>
+                </select>
+            </div>
+
+            <div class="form-actions space-between">
+                <button type="button" class="btn-outline" onclick="goToStep(2)">&larr; Back</button>
+                <button type="button" class="btn-primary" onclick="triggerAnalysis()">Find My Schemes &rarr;</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Loading Animation Screen -->
+    <div id="analyzing-screen" class="card analysis-screen" style="display: none;">
+        <div class="sparkle-icon">&#10024;</div>
+        <h2>Analyzing Your Profile</h2>
+        <p class="analyzing-sub">Cross-referencing verified government portals...</p>
+
+        <div class="progress-bar-outer">
+            <div class="progress-bar-inner" id="analysis-fill"></div>
+        </div>
+        <span class="progress-percent" id="analysis-percent">0%</span>
+
+        <ul class="analysis-status-list">
+            <li id="status-1" class="pending">Demographic parameters parsed</li>
+            <li id="status-2" class="pending">Evaluating ministry criteria</li>
+            <li id="status-3" class="pending">Generating compatibility match scores</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

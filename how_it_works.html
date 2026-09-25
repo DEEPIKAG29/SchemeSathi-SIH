@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="about-container">
+  
+  <!-- Header Title -->
+  <div style="text-align: center; margin-bottom: 2.5rem;">
+    <span class="badge">SYSTEM WORKFLOW</span>
+    <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--secondary);">HOW IT WORKS</h1>
+    <p style="color: var(--text-muted); font-size: 1rem; max-width: 600px; margin: 0.5rem auto 0;">
+      A transparent, rule-based approach to connecting businesses with the right government support.
+    </p>
+  </div>
+
+  <!-- Problem and Solution Row -->
+  <div class="grid-2 mb-2">
+    <div class="card" style="border-left: 4px solid #ef4444;">
+      <h3 style="color: var(--secondary); margin-bottom: 0.5rem;">The Problem</h3>
+      <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6;">
+        Entrepreneurs and small business owners often miss out on available government subsidies and schemes due to fragmented information across multiple portals.
+      </p>
+    </div>
+
+    <div class="card" style="border-left: 4px solid var(--accent);">
+      <h3 style="color: var(--secondary); margin-bottom: 0.5rem;">Our Solution</h3>
+      <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6;">
+        SchemeSathi matches verified eligibility criteria against an entrepreneur's specific demographics, location, and business parameters using a deterministic scoring engine.
+      </p>
+    </div>
+  </div>
+
+  <!-- Architecture Pipeline Card -->
+  <div class="card mb-2" style="padding: 2.2rem;">
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <h2 style="font-size: 1.35rem; color: var(--secondary);">System Architecture Pipeline</h2>
+      <p style="font-size: 0.88rem; color: var(--text-muted);">Step-by-step workflow from input to discovery</p>
+    </div>
+
+    <div class="arch-flow">
+      <!-- Step 1 -->
+      <div class="arch-step">
+        <div class="arch-tag">Step 1</div>
+        <h4>User Profile</h4>
+        <p>Demographic criteria, business sector, location category, and income bracket inputs.</p>
+      </div>
+
+      <div class="arch-arrow">&darr;</div>
+
+      <!-- Step 2 -->
+      <div class="arch-step">
+        <div class="arch-tag">Step 2</div>
+        <h4>Criteria Match Engine</h4>
+        <p>Evaluates mandatory government conditions and applies dynamic compatibility weights.</p>
+      </div>
+
+      <div class="arch-arrow">&darr;</div>
+
+      <!-- Step 3 -->
+      <div class="arch-step">
+        <div class="arch-tag">Step 3</div>
+        <h4>Ranked Recommendations</h4>
+        <p>Generates match scores, detailed criteria breakdown, and direct application routes.</p>
+      </div>
+
+      <div class="arch-arrow">&darr;</div>
+
+      <!-- Step 4 -->
+      <div class="arch-step">
+        <div class="arch-tag">Step 4</div>
+        <h4>Side-by-Side Comparison</h4>
+        <p>Allows entrepreneurs to compare loan limits, subsidies, and required documents.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Call to action button -->
+  <div style="text-align: center; margin-top: 2rem;">
+    <a href="/profile" class="btn-primary btn-large">Start Finding Schemes &rarr;</a>
+  </div>
+
+</div>
+{% endblock %}

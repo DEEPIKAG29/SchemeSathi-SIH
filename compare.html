@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="compare-container">
+    <div class="results-header">
+        <div>
+            <h2>Compare Scheme Options</h2>
+            <p class="subtitle" style="margin-bottom:0;">Analyze parameters side-by-side to choose the best fit for your venture.</p>
+        </div>
+        <a href="/recommendations" class="btn-outline">&larr; Back to Results</a>
+    </div>
+
+    <form method="GET" action="/compare" class="compare-selectors">
+        <div class="select-box">
+            <label><strong>Select Scheme 1:</strong></label>
+            <select name="id1" onchange="this.form.submit()">
+                {% for s in all_schemes %}
+                    <option value="{{ s.id }}" {% if s.id == s1.id %}selected{% endif %}>{{ s.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="select-box">
+            <label><strong>Select Scheme 2:</strong></label>
+            <select name="id2" onchange="this.form.submit()">
+                {% for s in all_schemes %}
+                    <option value="{{ s.id }}" {% if s.id == s2.id %}selected{% endif %}>{{ s.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+
+    <div class="card table-wrapper">
+        <table class="compare-table">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">Feature / Requirement</th>
+                    <th style="width: 37.5%;">{{ s1.name }}</th>
+                    <th style="width: 37.5%;">{{ s2.name }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Compatibility Score</strong></td>
+                    <td><span class="score-tag" style="font-size: 1rem; font-weight: bold;">{{ s1.score }}% Match</span></td>
+                    <td><span class="score-tag" style="font-size: 1rem; font-weight: bold;">{{ s2.score }}% Match</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Ministry / Authority</strong></td>
+                    <td>{{ s1.ministry }}</td>
+                    <td>{{ s2.ministry }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Target Category</strong></td>
+                    <td>{{ s1.category | join(', ') }}</td>
+                    <td>{{ s2.category | join(', ') }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Annual Income Limit</strong></td>
+                    <td>&#8377;{{ s1.max_income }}</td>
+                    <td>&#8377;{{ s2.max_income }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Eligible Stages</strong></td>
+                    <td>{{ s1.business_stage | join(', ') }}</td>
+                    <td>{{ s2.business_stage | join(', ') }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Key Benefits</strong></td>
+                    <td>{{ s1.benefits }}</td>
+                    <td>{{ s2.benefits }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Documentation</strong></td>
+                    <td>{{ s1.documents | length }} documents required</td>
+                    <td>{{ s2.documents | length }} documents required</td>
+                </tr>
+                <tr>
+                    <td><strong>Action</strong></td>
+                    <td><a href="/scheme/{{ s1.id }}" class="btn-outline-sm">View Full Details &rarr;</a></td>
+                    <td><a href="/scheme/{{ s2.id }}" class="btn-outline-sm">View Full Details &rarr;</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

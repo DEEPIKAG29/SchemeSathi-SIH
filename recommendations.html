@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Top Header and Compare Button -->
+<div class="results-header">
+    <div>
+        <h2 data-en="Targeted Government Schemes" data-hi="लक्षित सरकारी योजनाएं">Targeted Government Schemes</h2>
+        <p class="subtitle" style="margin-bottom:0;" data-en="Showing highly compatible schemes (90%+ match score)." data-hi="केवल अत्यधिक संगत योजनाएं (90%+ मिलान स्कोर) दिखाई जा रही हैं।">Showing highly compatible schemes (90%+ match score).</p>
+    </div>
+    <a href="/compare" class="btn-outline" data-en="Compare Schemes" data-hi="योजनाओं की तुलना करें">Compare Schemes</a>
+</div>
+
+<!-- Search, Filter and Sorting Controls -->
+<div class="card controls-strip">
+    <div class="control-item search-box-wrapper" style="flex: 1;">
+        <input type="text" id="scheme-search-input" placeholder="Search by scheme name or keyword (e.g., subsidy, loan)..." onkeyup="liveSearchSchemes()" style="width: 100%; padding: 0.6rem 0.9rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem;">
+    </div>
+
+    <div class="control-item">
+        <label for="filter-type"><strong data-en="Benefit:" data-hi="लाभ:">Benefit:</strong></label>
+        <select id="filter-type" onchange="applyFilterAndSort()">
+            <option value="All">All Benefits</option>
+            <option value="Subsidy">Subsidies</option>
+            <option value="Loan">Loans</option>
+        </select>
+    </div>
+
+    <div class="control-item">
+        <label for="sort-type"><strong data-en="Sort:" data-hi="क्रम:">Sort:</strong></label>
+        <select id="sort-type" onchange="applyFilterAndSort()">
+            <option value="match_desc">Match Score (Highest First)</option>
+            <option value="match_asc">Match Score (Lowest First)</option>
+            <option value="name_asc">Scheme Name (A-Z)</option>
+        </select>
+    </div>
+</div>
+
+{% if top_match %}
+<!-- Highlighted Top Match Card -->
+<div class="card top-match-card scheme-item-card" data-score="{{ top_match.score }}" data-name="{{ top_match.name }}" data-benefit="{{ top_match.benefits }} {{ top_match.benefit_type }}">
+    <span class="top-badge">&#11088; TOP COMPATIBILITY MATCH</span>
+    
+    <div class="top-match-body">
+        <div>
+            <h2>{{ top_match.name }}</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">{{ top_match.ministry }}</p>
+            <p style="margin: 0.8rem 0;">{{ top_match.benefits }}</p>
+
+            <div class="verification-checks">
+                {% if top_match.checks %}
+                    {% for criteria, passed in top_match.checks.items() %}
+                        <span class="check-pill {% if passed %}pass{% else %}fail{% endif %}">
+                            {% if passed %}&#10003;{% else %}&#10005;{% endif %} {{ criteria }}
+                        </span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="score-box">
+            <div class="score-circle">{{ top_match.score }}%</div>
+            <div class="score-tag">EXCELLENT MATCH</div>
+        </div>
+    </div>
+
+    <div class="card-actions">
+        <button type="button" class="btn-outline btn-why-match" data-scheme-id="{{ top_match.id }}">Why This Match?</button>
+        <a href="/scheme/{{ top_match.id }}" class="btn-primary">Explore Details &rarr;</a>
+    </div>
+</div>
+
+{% if other_matches %}
+<h3 style="margin-bottom: 1.2rem;" data-en="Other Highly Eligible Schemes (90%+)" data-hi="अन्य अत्यधिक पात्र योजनाएं (90%+)">Other Highly Eligible Schemes (90%+)</h3>
+
+<div class="schemes-grid" id="other-schemes-grid">
+    {% for s in other_matches %}
+    <div class="card scheme-grid-card scheme-item-card" data-score="{{ s.score }}" data-name="{{ s.name }}" data-benefit="{{ s.benefits }} {{ s.benefit_type }}">
+        <div class="grid-card-score">{{ s.score }}% MATCH</div>
+        <h3>{{ s.name }}</h3>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin: 0.3rem 0 1rem;">{{ s.ministry }}</p>
+        <p style="font-size: 0.92rem; color: #475569;">{{ s.benefits }}</p>
+
+        <div class="grid-card-actions">
+            <button type="button" class="btn-text btn-why-match" data-scheme-id="{{ s.id }}">Why Match?</button>
+            <a href="/scheme/{{ s.id }}" class="btn-outline-sm">Explore &rarr;</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% else %}
+<!-- Fallback if no scheme matches 90% or above -->
+<div class="card" style="text-align: center; padding: 3rem 1.5rem; margin-top: 1.5rem;">
+    <h3 style="color: var(--secondary); margin-bottom: 0.5rem;">No Schemes Met The 90%+ Threshold</h3>
+    <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">
+        Currently, no schemes matched 90% or higher with your exact profile parameters. Try updating your profile details.
+    </p>
+    <a href="/profile" class="btn-primary">Update Profile &rarr;</a>
+</div>
+{% endif %}
+
+<!-- Modal Popup for Verification Details -->
+<div id="why-modal-backdrop" class="modal-backdrop" style="display: none;">
+    <div class="card modal-window">
+        <div class="modal-header">
+            <div>
+                <h3 id="modal-scheme-title" style="color: var(--secondary);">Scheme Eligibility</h3>
+                <span id="modal-score-val" class="score-tag" style="font-size: 0.9rem;"></span>
+            </div>
+            <button type="button" class="close-btn" id="modal-close-button">&#10005;</button>
+        </div>
+
+        <p style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-top: 1.2rem;">VERIFICATION BREAKDOWN</p>
+        <div id="modal-checks-grid" class="checks-breakdown-grid"></div>
+
+        <p style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-top: 1.2rem;">AI REASONING</p>
+        <p id="modal-explanation" style="font-size: 0.92rem; color: #334155; margin-top: 0.3rem;"></p>
+    </div>
+</div>
+{% endblock %}

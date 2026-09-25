@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <span class="badge">GOVERNMENT-BACKED INITIATIVES</span>
+    <h1 class="hero-title">FIND THE RIGHT GOVERNMENT SCHEME FOR YOUR BUSINESS</h1>
+    <p class="hero-subtitle">Simple. Personalized. Government-backed.</p>
+    <a href="/profile" class="btn-primary btn-large">FIND MY SCHEMES &rarr;</a>
+</section>
+
+<!-- Features Grid Section -->
+<section class="features-grid">
+    <div class="card feature-card">
+        <div class="feature-icon">&#128269;</div>
+        <h3>Discover Schemes</h3>
+        <p>Browse central and state government schemes curated for your enterprise sector.</p>
+    </div>
+    
+    <div class="card feature-card">
+        <div class="feature-icon">&#9989;</div>
+        <h3>Check Eligibility</h3>
+        <p>Instantly evaluate age, category, location, and turnover against official guidelines.</p>
+    </div>
+    
+    <div class="card feature-card">
+        <div class="feature-icon">&#9878;</div>
+        <h3>Compare Schemes</h3>
+        <p>Compare benefits, loan amounts, subsidies, and required documents side-by-side.</p>
+    </div>
+</section>
+
+<!-- Four Step Workflow Section -->
+<section class="card workflow-card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 class="section-title" style="margin-bottom: 0;">HOW IT WORKS</h2>
+        <a href="/how-it-works" class="btn-outline-sm">Full Architecture &rarr;</a>
+    </div>
+    
+    <div class="steps-flow">
+        <div class="step-item">
+            <div class="step-num">1</div>
+            <span class="step-label">Profile</span>
+        </div>
+        <div class="step-arrow">&rarr;</div>
+        
+        <div class="step-item">
+            <div class="step-num">2</div>
+            <span class="step-label">Match</span>
+        </div>
+        <div class="step-arrow">&rarr;</div>
+        
+        <div class="step-item">
+            <div class="step-num">3</div>
+            <span class="step-label">Compare</span>
+        </div>
+        <div class="step-arrow">&rarr;</div>
+        
+        <div class="step-item">
+            <div class="step-num">4</div>
+            <span class="step-label">Apply</span>
+        </div>
+    </div>
+</section>
+{% endblock %}

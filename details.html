@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="details-wrapper">
+    <!-- Header with Back and Print Summary Button -->
+    <div class="no-print" style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+        <a href="/recommendations" class="btn-outline-sm">&larr; Back to Results</a>
+        <button type="button" class="btn-outline-sm" onclick="window.print()">🖨️ Export / Print Summary</button>
+    </div>
+
+    <div class="card">
+        <!-- Scheme Title and Match Score -->
+        <div class="details-hero">
+            <div>
+                <h2>{{ scheme.name }}</h2>
+                <p style="color: var(--text-muted); font-size: 1rem;">{{ scheme.ministry }}</p>
+            </div>
+            <div class="score-box">
+                <div class="score-circle">{{ score }}%</div>
+                <div class="score-tag">MATCH SCORE</div>
+            </div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid var(--border); margin: 1.5rem 0;">
+
+        <!-- Two Column Details Grid -->
+        <div class="details-grid">
+            <!-- Left Column: Verification and Eligibility -->
+            <div>
+                <h3>Why This Scheme Matches You</h3>
+                <div class="verification-checks mt-2">
+                    {% for criteria, passed in checks.items() %}
+                        <span class="check-pill {% if passed %}pass{% else %}fail{% endif %}">
+                            {% if passed %}&#10003;{% else %}&#10005;{% endif %} {{ criteria }} criteria {% if passed %}fulfilled{% else %}not met{% endif %}
+                        </span>
+                    {% endfor %}
+                </div>
+                <p style="margin-top: 1rem; color: #475569; font-size: 0.95rem;">{{ explanation }}</p>
+
+                <h3 class="mt-2">Core Eligibility Criteria</h3>
+                <ul class="documents-list" style="color: #334155; line-height: 1.8;">
+                    <li><strong>Target Category:</strong> {{ scheme.category }}</li>
+                    <li><strong>Target Gender:</strong> {{ scheme.gender }}</li>
+                    <li><strong>Applicable State:</strong> {{ scheme.state }}</li>
+                    <li><strong>Age Limit:</strong> {{ scheme.min_age }} &ndash; {{ scheme.max_age }} years</li>
+                    <li><strong>Max Annual Income:</strong> &le; &#8377;{{ scheme.max_income }}</li>
+                    <li><strong>Area Type:</strong> {{ scheme.area }}</li>
+                </ul>
+            </div>
+
+            <!-- Right Column: Benefits, Checklist Tracker and Process -->
+            <div>
+                <h3>Benefits &amp; Support</h3>
+                <p style="margin-top: 0.5rem; color: #334155;">{{ scheme.benefits }}</p>
+
+                <h3 class="mt-2">Required Documents &amp; Readiness Tracker</h3>
+                <div class="readiness-meter-box" style="background: #f8fafc; border: 1px solid var(--border); padding: 0.8rem; border-radius: 8px; margin: 0.6rem 0;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">
+                        <span>Document Preparation Status</span>
+                        <span id="readiness-score-text">0% Ready</span>
+                    </div>
+                    <div class="progress-bar-outer" style="height: 8px; margin-bottom: 0;">
+                        <div class="progress-bar-inner" id="readiness-progress-fill" style="width: 0%; background: var(--accent);"></div>
+                    </div>
+                </div>
+
+                <!-- Document Checklist Items -->
+                <div class="document-checklist">
+                    {% for doc in scheme.documents %}
+                        <label style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.92rem; color: #334155; margin-bottom: 0.4rem; cursor: pointer;">
+                            <input type="checkbox" class="doc-checkbox" onchange="updateDocumentReadiness()">
+                            <span>{{ doc }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+
+                <h3 class="mt-2">Application Process</h3>
+                <p style="margin-top: 0.5rem; color: #334155;">{{ scheme.application_process }}</p>
+            </div>
+        </div>
+
+        <!-- Footer Action Buttons -->
+        <div class="no-print" style="margin-top: 2.5rem; display: flex; gap: 1rem;">
+            <a href="{{ scheme.official_url }}" target="_blank" rel="noopener noreferrer" class="btn-primary">Visit Official Portal &rarr;</a>
+            <a href="/recommendations" class="btn-outline">Back to Recommendations</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
