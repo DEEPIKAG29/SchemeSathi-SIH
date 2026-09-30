@@ -1,0 +1,693 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- External Leaflet CSS and JS dependencies -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+  .partner-card-active {
+    border-left: 5px solid #16a34a;
+    background: #ffffff;
+  }
+  .partner-card-best {
+    border-left: 5px solid #1e3a8a;
+    background: #f8fafc;
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.08);
+  }
+  .partner-card-blocked {
+    border-left: 5px solid #dc2626;
+    background-color: #fffafb;
+    opacity: 0.85;
+  }
+  .status-badge-best {
+    background-color: #eff6ff;
+    color: #1e3a8a;
+    font-weight: 800;
+    font-size: 0.76rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    border: 1px solid #bfdbfe;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .status-badge-active {
+    background-color: #dcfce7;
+    color: #15803d;
+    font-weight: 700;
+    font-size: 0.76rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  .status-badge-blocked {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    font-weight: 700;
+    font-size: 0.76rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  .distance-tag {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #0369a1;
+    background: #e0f2fe;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+  }
+  .npa-val-safe {
+    color: #16a34a;
+    font-weight: 700;
+  }
+  .npa-val-danger {
+    color: #dc2626;
+    font-weight: 700;
+  }
+  .user-pulse-marker {
+    background-color: #2563eb;
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.45);
+  }
+</style>
+
+<div class="compare-container" style="max-width: 1120px; margin: 0 auto; padding: 1.5rem 1rem;">
+    
+    <!-- Page Header and Actions -->
+    <div class="results-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h1 class="page-title" data-i18n="loc_title">Nearest Channel Banks &amp; SCA Desks</h1>
+            <p class="page-subtitle" data-i18n="loc_subtitle">
+                Verified MoSJE channel lending desks calculated via real road driving routes from your current location.
+            </p>
+        </div>
+        <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
+            <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 0.4rem 0.8rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; font-weight: 700; color: #1e40af;">
+                <svg class="icon-svg" style="width: 15px; height: 15px;" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 17.93V18a1 1 0 0 0-2 0v1.93A8 8 0 0 1 4.07 13H6a1 1 0 0 0 0-2H4.07A8 8 0 0 1 11 4.07V6a1 1 0 0 0 2 0V4.07A8 8 0 0 1 19.93 11H18a1 1 0 0 0 0 2h1.93A8 8 0 0 1 13 19.93z"></path></svg>
+                <span id="user-location-name" data-i18n="loc_detecting">Detecting location...</span>
+            </div>
+            <a href="/recommendations" class="btn-outline-sm">
+                <span data-i18n="back_rec">Back to Recommendations</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Scheme Linkage Selector Bar (NEW FEATURE) -->
+    <div class="card" style="background: #f8fafc; border: 1px solid var(--border); border-left: 4px solid #1e3a8a; border-radius: 6px; padding: 1rem 1.2rem; margin-bottom: 1.2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div style="flex: 1; min-width: 280px;">
+                <label style="display: block; font-size: 0.84rem; font-weight: 700; color: #1e3a8a; margin-bottom: 0.3rem;" data-i18n="filter_by_scheme">
+                    Select Target Scheme to Find Available Banks:
+                </label>
+                <select id="scheme-linkage-picker" onchange="filterAndReorderList()" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.88rem; background: #fff; font-weight: 600;">
+                    <option value="ALL" data-i18n-opt="opt_all_schemes">-- All Schemes (General Channel Desks) --</option>
+                    <option value="MSY">Mahila Samriddhi Yojana (MSY - Women Micro Credit)</option>
+                    <option value="MFS">Micro Finance Scheme (MFS)</option>
+                    <option value="GREEN">Green Business Scheme (Swachh Udyami)</option>
+                    <option value="DIVYANG">Divyangjan Swavalamban Yojana</option>
+                    <option value="ELS">Educational Loan Scheme (ELS)</option>
+                    <option value="SRMS">Self-Employment Scheme (SRMS)</option>
+                </select>
+            </div>
+            <div style="font-size: 0.82rem; color: #475569; max-width: 320px; line-height: 1.4;" data-i18n="linkage_hint">
+                Ch चुनी गई योजना के आधार पर केवल वही बैंक डेस्क दिखाई देंगे जो इस योजना का वितरण करते हैं।
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter and Search Controls Strip -->
+    <div class="card controls-strip" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 0.85rem 1.2rem; margin-bottom: 1.2rem;">
+        <div style="display: flex; gap: 0.8rem; align-items: center; flex: 1; min-width: 260px;">
+            <label for="channel-type-filter" style="font-size: 0.84rem; font-weight: 700; color: #334155; white-space: nowrap;" data-i18n="chan_type_lbl">
+                Channel Type:
+            </label>
+            <select id="channel-type-filter" onchange="filterAndReorderList()" style="flex: 1; padding: 0.45rem 0.7rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem; background: #fff;">
+                <option value="ALL" data-i18n-opt="opt_all_desks">All Authorized Lending Desks</option>
+                <option value="SCA" data-i18n-opt="opt_sca">State Channelising Agency (SCA)</option>
+                <option value="PSB" data-i18n-opt="opt_psb">Public Sector Banks (SBI, PNB, etc.)</option>
+                <option value="RRB" data-i18n-opt="opt_rrb">Regional Rural Bank (Gramin Bank)</option>
+                <option value="NBFC-MFI" data-i18n-opt="opt_mfi">NBFC-MFIs (Micro Finance Institutions)</option>
+            </select>
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: 0.8rem;">
+            <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: #475569; cursor: pointer;">
+                <input type="checkbox" id="toggle-hide-inactive" checked onchange="filterAndReorderList()" style="width: 15px; height: 15px; cursor: pointer;">
+                <span data-i18n="hide_npa">Hide Inactive Desks (&ge; 8% NPA)</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- 2-Column Responsive Layout -->
+    <div class="details-grid" style="display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 1.5rem; align-items: start;">
+        
+        <!-- Left Column: Sorted Branch Directory List -->
+        <div class="partners-container" id="partners-list-box" style="max-height: 720px; overflow-y: auto; padding-right: 0.4rem;">
+            {% for p in partners %}
+            <div class="card partner-card {% if p.fund_status == 'Active' %}partner-card-active{% else %}partner-card-blocked{% endif %}" 
+                 id="partner-card-{{ p.id }}"
+                 data-id="{{ p.id }}"
+                 data-name="{{ p.name }}"
+                 data-type="{{ p.type }}" 
+                 data-status="{{ p.fund_status }}"
+                 data-lat="{{ p.lat }}"
+                 data-lng="{{ p.lng }}"
+                 data-npa="{{ p.net_npa_pct }}"
+                 data-district="{{ p.district }}"
+                 data-nodal="{{ p.nodal_officer }}"
+                 style="margin-bottom: 1rem; padding: 1.1rem;">
+                
+                <!-- Status and Category Header -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.4rem;">
+                    <div style="display: flex; align-items: center; gap: 0.4rem;">
+                        <span id="badge-best-{{ p.id }}" class="status-badge-best" style="display: none;" data-i18n="primary_desk_badge">
+                            &#9733; PRIMARY RECOMMENDED DESK
+                        </span>
+                        {% if p.fund_status == 'Active' %}
+                            <span class="status-badge-active" data-i18n="badge_active">ACTIVE &bull; ACCEPTING APPLICATIONS</span>
+                        {% else %}
+                            <span class="status-badge-blocked" data-i18n="badge_suspended">QUOTA SUSPENDED (NPA: {{ p.net_npa_pct }}%)</span>
+                        {% endif %}
+                    </div>
+                    
+                    <span class="distance-tag" id="distance-tag-{{ p.id }}" data-i18n="calc_route">Calculating road route...</span>
+                </div>
+
+                <!-- Branch Details -->
+                <h3 style="font-size: 1.05rem; margin: 0.2rem 0; color: #0f172a;">{{ p.name }}</h3>
+                <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600; margin-bottom: 0.5rem;">
+                    {{ p.type }} &bull; {{ p.district }}, {{ p.state }}
+                </div>
+
+                <p style="margin: 0.25rem 0; font-size: 0.85rem; color: #475569; line-height: 1.4;">
+                    <strong data-i18n="office_addr">Office Address:</strong> {{ p.address }}
+                </p>
+                <p style="margin: 0.25rem 0; font-size: 0.85rem; color: #475569; line-height: 1.4;">
+                    <strong data-i18n="desk_off">Desk Officer:</strong> {{ p.nodal_officer }} &bull; <strong data-i18n="helpline">Helpline:</strong> {{ p.contact }}
+                </p>
+                
+                <!-- Prudential Safety Indicator -->
+                <div style="margin-top: 0.75rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.5rem 0.8rem;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.76rem; font-weight: 600; margin-bottom: 0.25rem;">
+                        <span style="color: #64748b;" data-i18n="npa_level">Prudential Net NPA Level:</span>
+                        <span class="{% if p.fund_status == 'Active' %}npa-val-safe{% else %}npa-val-danger{% endif %}">
+                            {{ p.net_npa_pct }}% (<span data-i18n="allowed_limit">Allowed limit:</span> &lt; 8.0%)
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Action Button Row -->
+                <div style="margin-top: 0.85rem; display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
+                    {% if p.fund_status == 'Active' %}
+                        <button type="button" class="btn-primary btn-focus-trigger" 
+                                data-lat="{{ p.lat }}" 
+                                data-lng="{{ p.lng }}" 
+                                data-id="{{ p.id }}" 
+                                style="padding: 0.4rem 0.85rem; font-size: 0.82rem; background: var(--primary);">
+                            <svg class="icon-svg" style="width: 13px; height: 13px;" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                            <span data-i18n="view_route">View Driving Route</span>
+                        </button>
+                        <a href="https://www.google.com/maps/dir/?api=1&destination={{ p.lat }},{{ p.lng }}" target="_blank" rel="noopener noreferrer" class="btn-outline-sm" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                            <span data-i18n="directions">Directions &rarr;</span>
+                        </a>
+                    {% else %}
+                        <span style="font-size: 0.8rem; color: #dc2626; font-weight: 600;" data-i18n="do_not_visit">
+                            Do not visit: Disbursal frozen due to bank NPA guidelines.
+                        </span>
+                    {% endif %}
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Right Column: Sticky Map Container -->
+        <div style="position: sticky; top: 1rem;">
+            
+            <div class="card" style="padding: 0; overflow: hidden; height: 460px; border-radius: 8px; border: 1px solid var(--border);">
+                <div id="map-box" style="height: 100%; width: 100%;"></div>
+            </div>
+
+            <!-- Map Legend -->
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 0.6rem; padding: 0.5rem 0.8rem; background: #fff; border: 1px solid var(--border); border-radius: 6px;">
+                <span style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <span style="width: 11px; height: 11px; background: #2563eb; border-radius: 50%; display: inline-block;"></span>
+                    <strong data-i18n="legend_loc">Your Location</strong>
+                </span>
+                <span style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <span style="width: 10px; height: 10px; background: #1e40af; border-radius: 50%; display: inline-block;"></span>
+                    <strong data-i18n="legend_primary">Primary Desk</strong>
+                </span>
+                <span style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <span style="width: 10px; height: 10px; background: #16a34a; border-radius: 50%; display: inline-block;"></span>
+                    <strong data-i18n="legend_active">Active Desk</strong>
+                </span>
+                <span style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <span style="width: 10px; height: 10px; background: #dc2626; border-radius: 50%; display: inline-block;"></span>
+                    <strong data-i18n="legend_suspended">Suspended</strong>
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+const locatorPageDict = {
+    en: {
+        loc_title: "Nearest Channel Banks & SCA Desks",
+        loc_subtitle: "Verified MoSJE channel lending desks calculated via real road driving routes from your current location.",
+        loc_detecting: "Detecting location...",
+        back_rec: "Back to Recommendations",
+        filter_by_scheme: "Select Target Scheme to Find Available Banks:",
+        opt_all_schemes: "-- All Schemes (General Channel Desks) --",
+        linkage_hint: "Based on the selected scheme, only authorized desks supporting this loan will be displayed.",
+        chan_type_lbl: "Channel Type:",
+        opt_all_desks: "All Authorized Lending Desks",
+        opt_sca: "State Channelising Agency (SCA)",
+        opt_psb: "Public Sector Banks (SBI, PNB, etc.)",
+        opt_rrb: "Regional Rural Bank (Gramin Bank)",
+        opt_mfi: "NBFC-MFIs (Micro Finance Institutions)",
+        hide_npa: "Hide Inactive Desks (≥ 8% NPA)",
+        primary_desk_badge: "★ PRIMARY RECOMMENDED DESK",
+        badge_active: "ACTIVE • ACCEPTING APPLICATIONS",
+        badge_suspended: "QUOTA SUSPENDED (NPA: > 8%)",
+        calc_route: "Calculating road route...",
+        office_addr: "Office Address:",
+        desk_off: "Desk Officer:",
+        helpline: "Helpline:",
+        npa_level: "Prudential Net NPA Level:",
+        allowed_limit: "Allowed limit:",
+        view_route: "View Driving Route",
+        directions: "Directions →",
+        do_not_visit: "Do not visit: Disbursal frozen due to bank NPA guidelines.",
+        legend_loc: "Your Location",
+        legend_primary: "Primary Desk",
+        legend_active: "Active Desk",
+        legend_suspended: "Suspended"
+    },
+    hi: {
+        loc_title: "निकटतम बैंक शाखाएं एवं चैनल केंद्र",
+        loc_subtitle: "आपके वर्तमान स्थान से वास्तविक सड़क मार्ग और सुरक्षित बैंक कोटे के आधार पर सत्यापित केंद्र।",
+        loc_detecting: "स्थान खोजा जा रहा है...",
+        back_rec: "← सिफारिशों पर वापस जाएं",
+        filter_by_scheme: "उपलब्ध बैंक खोजने के लिए लक्षित योजना चुनें:",
+        opt_all_schemes: "-- सभी योजनाएं (सामान्य चैनल डेस्क) --",
+        linkage_hint: "चुनी गई योजना के आधार पर केवल वही बैंक डेस्क दिखाई देंगे जो इस योजना का वितरण करते हैं।",
+        chan_type_lbl: "चैनल संस्था का प्रकार:",
+        opt_all_desks: "सभी अधिकृत ऋण केंद्र",
+        opt_sca: "राज्य चैनलिंग एजेंसी (SCA)",
+        opt_psb: "सार्वजनिक क्षेत्र के बैंक (SBI, PNB, आदि)",
+        opt_rrb: "क्षेत्रीय ग्रामीण बैंक (ग्रामीण बैंक)",
+        opt_mfi: "सूक्ष्म वित्त संस्थान (NBFC-MFI)",
+        hide_npa: "अनुपयुक्त बैंक छिपाएं (≥ 8% NPA)",
+        primary_desk_badge: "★ प्राथमिक अनुशंसित बैंक डेस्क",
+        badge_active: "सक्रिय • आवेदन स्वीकार किए जा रहे हैं",
+        badge_suspended: "कोटा स्थगित (NPA: > 8%)",
+        calc_route: "सड़क मार्ग की दूरी गणना हो रही है...",
+        office_addr: "कार्यालय का पता:",
+        desk_off: "डेस्क अधिकारी:",
+        helpline: "हेल्पलाइन:",
+        npa_level: "शुद्ध एनपीए (NPA) स्तर:",
+        allowed_limit: "अनुमत सीमा:",
+        view_route: "ड्राइविंग रूट देखें",
+        directions: "दिशा-निर्देश →",
+        do_not_visit: "केंद्र न जाएं: बैंक एनपीए नियमों के कारण वितरण स्थगित है।",
+        legend_loc: "आपका स्थान",
+        legend_primary: "मुख्य डेस्क",
+        legend_active: "सक्रिय डेस्क",
+        legend_suspended: "स्थगित"
+    }
+};
+
+function applyLocatorPageTranslation(lang) {
+    var dict = locatorPageDict[lang] || locatorPageDict.en;
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n');
+        if (dict[key]) el.innerText = dict[key];
+    });
+
+    document.querySelectorAll('[data-i18n-opt]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n-opt');
+        if (dict[key]) el.innerText = dict[key];
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    var savedLang = localStorage.getItem('schemesathi_lang') || 'en';
+    applyLocatorPageTranslation(savedLang);
+
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'schemesathi_lang') {
+            applyLocatorPageTranslation(e.newValue);
+        }
+    });
+
+    // Check if URL has scheme_id parameter to pre-select
+    const urlParams = new URLSearchParams(window.location.search);
+    const schemeParam = urlParams.get('scheme_id');
+    if (schemeParam) {
+        var picker = document.getElementById("scheme-linkage-picker");
+        if (picker) {
+            picker.value = schemeParam.toUpperCase();
+            filterAndReorderList();
+        }
+    }
+});
+
+var myMap = null;
+var markersMap = {};
+var partnersData = [];
+var userMarker = null;
+var routeLayer = null;
+
+var userLocation = {
+    lat: 28.9845,
+    lng: 77.7064,
+    cityName: "Meerut, Uttar Pradesh"
+};
+
+function calculateCrowDistanceKm(lat1, lon1, lat2, lon2) {
+    var R = 6371;
+    var dLat = (lat2 - lat1) * Math.PI / 180;
+    var dLon = (lon2 - lon1) * Math.PI / 180;
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+}
+
+function extractPartnersFromDOM() {
+    var cards = document.querySelectorAll(".partner-card");
+    var list = [];
+    cards.forEach(function(card) {
+        list.push({
+            id: card.getAttribute("data-id"),
+            name: card.getAttribute("data-name"),
+            type: card.getAttribute("data-type"),
+            fund_status: card.getAttribute("data-status"),
+            lat: parseFloat(card.getAttribute("data-lat")),
+            lng: parseFloat(card.getAttribute("data-lng")),
+            net_npa_pct: parseFloat(card.getAttribute("data-npa")),
+            nodal_officer: card.getAttribute("data-nodal"),
+            district: card.getAttribute("data-district"),
+            domElement: card
+        });
+    });
+    return list;
+}
+
+function fetchRoadDistance(partner, callback) {
+    var url = "https://router.project-osrm.org/route/v1/driving/" +
+              userLocation.lng + "," + userLocation.lat + ";" +
+              partner.lng + "," + partner.lat +
+              "?overview=false";
+
+    fetch(url)
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (data && data.routes && data.routes.length > 0) {
+                var meters = data.routes[0].distance;
+                partner.distance = meters / 1000;
+            } else {
+                partner.distance = calculateCrowDistanceKm(userLocation.lat, userLocation.lng, partner.lat, partner.lng) * 1.25;
+            }
+            if (callback) callback();
+        })
+        .catch(function() {
+            partner.distance = calculateCrowDistanceKm(userLocation.lat, userLocation.lng, partner.lat, partner.lng) * 1.25;
+            if (callback) callback();
+        });
+}
+
+function computeDistancesAndSort() {
+    var completedCount = 0;
+    
+    partnersData.forEach(function(p) {
+        if (!isNaN(p.lat) && !isNaN(p.lng)) {
+            p.distance = calculateCrowDistanceKm(userLocation.lat, userLocation.lng, p.lat, p.lng);
+            
+            fetchRoadDistance(p, function() {
+                var tag = document.getElementById("distance-tag-" + p.id);
+                if (tag) {
+                    tag.innerText = p.distance.toFixed(1) + " km road distance";
+                }
+                completedCount++;
+                if (completedCount === partnersData.length) {
+                    reorderDOMCards();
+                }
+            });
+        } else {
+            p.distance = 99999;
+        }
+
+        var initialTag = document.getElementById("distance-tag-" + p.id);
+        if (initialTag) {
+            initialTag.innerText = p.distance.toFixed(1) + " km approx";
+        }
+    });
+
+    reorderDOMCards();
+}
+
+function reorderDOMCards() {
+    partnersData.sort(function(a, b) {
+        if (a.fund_status === "Active" && b.fund_status !== "Active") return -1;
+        if (a.fund_status !== "Active" && b.fund_status === "Active") return 1;
+        return a.distance - b.distance;
+    });
+
+    var container = document.getElementById("partners-list-box");
+    var firstBestTagged = false;
+
+    partnersData.forEach(function(p) {
+        if (p.domElement && container) {
+            container.appendChild(p.domElement);
+            
+            var bestBadge = document.getElementById("badge-best-" + p.id);
+            if (!firstBestTagged && p.fund_status === "Active") {
+                p.domElement.className = "card partner-card partner-card-best";
+                if (bestBadge) bestBadge.style.display = "inline-flex";
+                firstBestTagged = true;
+            } else {
+                if (bestBadge) bestBadge.style.display = "none";
+                p.domElement.className = "card partner-card " + (p.fund_status === "Active" ? "partner-card-active" : "partner-card-blocked");
+            }
+        }
+    });
+}
+
+function filterAndReorderList() {
+    var chosenType = document.getElementById("channel-type-filter").value;
+    var hideInactive = document.getElementById("toggle-hide-inactive").checked;
+    var selectedScheme = document.getElementById("scheme-linkage-picker").value;
+
+    partnersData.forEach(function(p) {
+        var matchType = (chosenType === "ALL" || p.type === chosenType);
+        var matchStatus = (!hideInactive || p.fund_status === "Active");
+        
+        // Scheme Linkage Simulation Rule
+        var matchScheme = true;
+        if (selectedScheme !== "ALL") {
+            if (selectedScheme === "MSY" && p.type !== "SCA" && !p.name.includes("Mahila")) matchScheme = false;
+            if (selectedScheme === "DIVYANG" && !p.name.includes("National") && p.type !== "SCA") matchScheme = false;
+        }
+
+        if (p.domElement) {
+            if (matchType && matchStatus && matchScheme) {
+                p.domElement.style.display = "";
+            } else {
+                p.domElement.style.display = "none";
+            }
+        }
+    });
+}
+
+function renderMap() {
+    if (!myMap) {
+        myMap = L.map("map-box").setView([userLocation.lat, userLocation.lng], 11);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: "© OpenStreetMap contributors"
+        }).addTo(myMap);
+    }
+
+    var userPinIcon = L.divIcon({
+        className: 'user-pulse-marker',
+        iconSize: [16, 16],
+        iconAnchor: [8, 8]
+    });
+
+    if (userMarker) {
+        userMarker.setLatLng([userLocation.lat, userLocation.lng]);
+        userMarker.bindPopup("<b>📍 Your Current Location</b><br>" + userLocation.cityName);
+    } else {
+        userMarker = L.marker([userLocation.lat, userLocation.lng], { icon: userPinIcon }).addTo(myMap);
+        userMarker.bindPopup("<b>📍 Your Current Location</b><br>" + userLocation.cityName);
+    }
+
+    partnersData.forEach(function(bank, idx) {
+        if (isNaN(bank.lat) || isNaN(bank.lng)) return;
+
+        var isHealthy = (bank.fund_status === "Active");
+        var isTopNearest = (idx === 0 && isHealthy);
+        var pinColor = isTopNearest ? "#1e40af" : (isHealthy ? "#16a34a" : "#dc2626");
+
+        if (markersMap[bank.id]) {
+            myMap.removeLayer(markersMap[bank.id]);
+        }
+
+        var marker = L.circleMarker([bank.lat, bank.lng], {
+            color: pinColor,
+            radius: isTopNearest ? 10 : (isHealthy ? 7 : 5),
+            fillColor: pinColor,
+            fillOpacity: 0.85
+        }).addTo(myMap);
+
+        var statusTag = isHealthy 
+            ? "<span style='color:#16a34a;font-weight:bold;'>ACTIVE DESK (&lt; 8% NPA)</span>"
+            : "<span style='color:#dc2626;font-weight:bold;'>DISQUALIFIED (&ge; 8% NPA)</span>";
+
+        var popupHtml = "<b>" + bank.name + "</b><br>" + 
+                        "Road Distance: <b>" + bank.distance.toFixed(1) + " km</b><br>" +
+                        "Net NPA: " + bank.net_npa_pct + "%<br>" +
+                        "Desk Officer: " + bank.nodal_officer + "<br>" +
+                        statusTag + "<br><br>" +
+                        "<a href='https://www.google.com/maps/dir/?api=1&destination=" + bank.lat + "," + bank.lng + "' target='_blank'>Google Maps Navigation &rarr;</a>";
+
+        marker.bindPopup(popupHtml);
+        markersMap[bank.id] = marker;
+    });
+
+    var topActive = partnersData.find(function(p) { return p.fund_status === "Active"; });
+    if (topActive) {
+        drawRealRoadPath(topActive.lat, topActive.lng, topActive.id);
+    }
+}
+
+function drawRealRoadPath(bankLat, bankLng, branchId) {
+    if (!myMap) return;
+
+    var url = "https://router.project-osrm.org/route/v1/driving/" +
+              userLocation.lng + "," + userLocation.lat + ";" +
+              bankLng + "," + bankLat +
+              "?overview=full&geometries=geojson";
+
+    fetch(url)
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (routeLayer) {
+                myMap.removeLayer(routeLayer);
+            }
+
+            if (data && data.routes && data.routes.length > 0) {
+                var routeCoords = data.routes[0].geometry.coordinates.map(function(c) {
+                    return [c[1], c[0]];
+                });
+
+                routeLayer = L.polyline(routeCoords, {
+                    color: '#2563eb',
+                    weight: 4,
+                    opacity: 0.85
+                }).addTo(myMap);
+
+                myMap.fitBounds(routeLayer.getBounds(), { padding: [50, 50] });
+            } else {
+                routeLayer = L.polyline([[userLocation.lat, userLocation.lng], [bankLat, bankLng]], {
+                    color: '#2563eb',
+                    weight: 3,
+                    dashArray: '5, 8'
+                }).addTo(myMap);
+                myMap.fitBounds(routeLayer.getBounds(), { padding: [50, 50] });
+            }
+
+            if (markersMap[branchId]) {
+                markersMap[branchId].openPopup();
+            }
+        })
+        .catch(function() {
+            if (routeLayer) myMap.removeLayer(routeLayer);
+            routeLayer = L.polyline([[userLocation.lat, userLocation.lng], [bankLat, bankLng]], {
+                color: '#2563eb',
+                weight: 3,
+                dashArray: '5, 8'
+            }).addTo(myMap);
+            myMap.fitBounds(routeLayer.getBounds(), { padding: [50, 50] });
+
+            if (markersMap[branchId]) {
+                markersMap[branchId].openPopup();
+            }
+        });
+}
+
+function detectAccurateLocation() {
+    var locNameElem = document.getElementById("user-location-name");
+    if (locNameElem) locNameElem.innerText = "Locating via GPS / Network...";
+
+    function onSuccess(lat, lng, name) {
+        userLocation.lat = lat;
+        userLocation.lng = lng;
+        userLocation.cityName = name;
+        if (locNameElem) locNameElem.innerText = "📍 " + name;
+        computeDistancesAndSort();
+        filterAndReorderList();
+        renderMap();
+    }
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(pos) {
+            var lat = pos.coords.latitude;
+            var lng = pos.coords.longitude;
+
+            fetch("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lng)
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    var city = data.address.city || data.address.town || data.address.state_district || "Local Area";
+                    var state = data.address.state || "";
+                    onSuccess(lat, lng, city + (state ? ", " + state : ""));
+                })
+                .catch(function() {
+                    onSuccess(lat, lng, "Current GPS Location");
+                });
+        }, function() {
+            fetch("https://ipapi.co/json/")
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    if (data.latitude && data.longitude) {
+                        onSuccess(data.latitude, data.longitude, data.city + ", " + data.region);
+                    } else {
+                        onSuccess(28.9845, 77.7064, "Meerut, Uttar Pradesh");
+                    }
+                })
+                .catch(function() {
+                    onSuccess(28.9845, 77.7064, "Meerut, Uttar Pradesh");
+                });
+        }, { timeout: 6000, enableHighAccuracy: true });
+    } else {
+        onSuccess(28.9845, 77.7064, "Meerut, Uttar Pradesh");
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    partnersData = extractPartnersFromDOM();
+    computeDistancesAndSort();
+    renderMap();
+    filterAndReorderList();
+    detectAccurateLocation();
+
+    document.addEventListener("click", function(e) {
+        var btn = e.target.closest(".btn-focus-trigger");
+        if (btn) {
+            var lat = parseFloat(btn.getAttribute("data-lat"));
+            var lng = parseFloat(btn.getAttribute("data-lng"));
+            var id = btn.getAttribute("data-id");
+            drawRealRoadPath(lat, lng, id);
+        }
+    });
+});
+</script>
+{% endblock %}

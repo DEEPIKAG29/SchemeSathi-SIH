@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="about-container" style="max-width: 1050px; margin: 0 auto; padding: 1.5rem 1rem;">
+  
+  <!-- Header Title -->
+  <div style="text-align: center; margin-bottom: 2.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 2.5rem 1rem; box-shadow: var(--shadow-sm);">
+    <span class="badge" style="background: var(--accent-light); color: var(--primary-accent); padding: 0.35rem 0.8rem; border-radius: 20px; font-weight: 700; font-size: 0.78rem;" data-i18n="hi_badge">SYSTEM WORKFLOW &amp; GUIDE</span>
+    <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--text-main); margin: 0.8rem 0 0.5rem;" data-i18n="hi_title">How SchemeSathi Works</h1>
+    <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 650px; margin: 0 auto; line-height: 1.6;" data-i18n="hi_subtitle">
+      A transparent, interactive roadmap to help you discover welfare schemes, calculate concessional EMIs, and find safe bank desks instantly.
+    </p>
+  </div>
+
+  <!-- Problem and Solution Row -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+    <div class="card" style="border-top: 4px solid var(--danger); padding: 1.8rem;">
+      <h3 style="color: var(--text-main); font-size: 1.2rem; margin-bottom: 0.6rem;" data-i18n="hi_prob_heading">The Challenge Faced by Entrepreneurs</h3>
+      <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6;" data-i18n="hi_prob_desc">
+        Small business owners and local artisans often miss out on government subsidies because information is scattered across multiple portals. Complex bureaucratic rules and the fear of loan rejections create major barriers.
+      </p>
+    </div>
+
+    <div class="card" style="border-top: 4px solid var(--success); padding: 1.8rem;">
+      <h3 style="color: var(--text-main); font-size: 1.2rem; margin-bottom: 0.6rem;" data-i18n="hi_sol_heading">Our Intelligent Solution</h3>
+      <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6;" data-i18n="hi_sol_desc">
+        SchemeSathi matches verified eligibility criteria against your specific age, category, income, and business sector using a deterministic rule engine—eliminating middlemen and ensuring direct financial access.
+      </p>
+    </div>
+  </div>
+
+  <!-- Interactive Roadmap / Step-by-Step Flow Cards with Hover Animation -->
+  <style>
+    .roadmap-hover-card {
+      background: var(--bg-page);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      text-align: center;
+      position: relative;
+      border-radius: var(--radius-md);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .roadmap-hover-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
+      border-color: var(--primary-accent);
+      background: var(--surface);
+    }
+  </style>
+
+  <div class="card" style="padding: 2.5rem 2rem; margin-bottom: 2.5rem; background: var(--surface);">
+    <div style="text-align: center; margin-bottom: 2.5rem;">
+      <h2 style="font-size: 1.4rem; color: var(--text-main); font-weight: 800;" data-i18n="hi_pipe_title">Interactive User Roadmap</h2>
+      <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.2rem;" data-i18n="hi_pipe_sub">Hover over the steps below to explore your journey to securing a concessional loan</p>
+    </div>
+
+    <!-- Roadmap Grid Container -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; position: relative;">
+      
+      <!-- Roadmap Step 1 -->
+      <div class="roadmap-hover-card">
+        <div style="width: 38px; height: 38px; background: var(--accent-light); color: var(--primary-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.8rem; font-weight: 800; font-size: 0.9rem;">1</div>
+        <h4 style="font-size: 1.05rem; color: var(--text-main); margin-bottom: 0.5rem;" data-i18n="hi_s1_title">Enter Profile &amp; Trade</h4>
+        <p style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.5;" data-i18n="hi_s1_desc">
+          Go to <strong>Find Schemes</strong>, input your age, category, income (&le; ₹5L), and location. Use voice input or trade templates.
+        </p>
+      </div>
+
+      <!-- Roadmap Step 2 -->
+      <div class="roadmap-hover-card">
+        <div style="width: 38px; height: 38px; background: #e0e7ff; color: #4338ca; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.8rem; font-weight: 800; font-size: 0.9rem;">2</div>
+        <h4 style="font-size: 1.05rem; color: var(--text-main); margin-bottom: 0.5rem;" data-i18n="hi_s2_title">Compare &amp; Verify Matches</h4>
+        <p style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.5;" data-i18n="hi_s2_desc">
+          View ranked MoSJE schemes with match scores. Use the <strong>Compare</strong> tool to evaluate interest rates (4% to 6.5%) side by side.
+        </p>
+      </div>
+
+      <!-- Roadmap Step 3 -->
+      <div class="roadmap-hover-card">
+        <div style="width: 38px; height: 38px; background: var(--success-light); color: var(--success); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.8rem; font-weight: 800; font-size: 0.9rem;">3</div>
+        <h4 style="font-size: 1.05rem; color: var(--text-main); margin-bottom: 0.5rem;" data-i18n="hi_s3_title">Calculate EMIs &amp; DPR Splits</h4>
+        <p style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.5;" data-i18n="hi_s3_desc">
+          Check reducing-balance EMIs with 3-6 months zero-EMI moratorium grace periods and automatic Machinery vs. Working Capital DPR splits.
+        </p>
+      </div>
+
+      <!-- Roadmap Step 4 -->
+      <div class="roadmap-hover-card">
+        <div style="width: 38px; height: 38px; background: #fff7ed; color: #ea580c; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.8rem; font-weight: 800; font-size: 0.9rem;">4</div>
+        <h4 style="font-size: 1.05rem; color: var(--text-main); margin-bottom: 0.5rem;" data-i18n="hi_s4_title">Locate Safe Banks &amp; PDF</h4>
+        <p style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.5;" data-i18n="hi_s4_desc">
+          Use the <strong>Bank Locator</strong> for real road routes to Net NPA-safe (&lt; 8%) bank desks. Tick ready documents and download your PDF dossier.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Call to Action -->
+  <div style="text-align: center; margin-top: 2rem;">
+    <a href="/profile" class="btn-primary" style="padding: 0.8rem 2rem; font-size: 0.98rem;">
+      <span data-i18n="hi_cta_btn">Start Finding Schemes Now &rarr;</span>
+    </a>
+  </div>
+
+</div>
+
+<script>
+const howItWorksPageDict = {
+    en: {
+        hi_badge: "SYSTEM WORKFLOW & GUIDE",
+        hi_title: "How SchemeSathi Works",
+        hi_subtitle: "A transparent, interactive roadmap to help you discover welfare schemes, calculate concessional EMIs, and find safe bank desks instantly.",
+        hi_prob_heading: "The Challenge Faced by Entrepreneurs",
+        hi_prob_desc: "Small business owners and local artisans often miss out on government subsidies because information is scattered across multiple portals. Complex bureaucratic rules and the fear of loan rejections create major barriers.",
+        hi_sol_heading: "Our Intelligent Solution",
+        hi_sol_desc: "SchemeSathi matches verified eligibility criteria against your specific age, category, income, and business sector using a deterministic rule engine—eliminating middlemen and ensuring direct financial access.",
+        hi_pipe_title: "Interactive User Roadmap",
+        hi_pipe_sub: "Hover over the steps below to explore your journey to securing a concessional loan",
+        hi_s1_title: "Enter Profile & Trade",
+        hi_s1_desc: "Go to Find Schemes, input your age, category, income (≤ ₹5L), and location. Use voice input or trade templates.",
+        hi_s2_title: "Compare & Verify Matches",
+        hi_s2_desc: "View ranked MoSJE schemes with match scores. Use the Compare tool to evaluate interest rates (4% to 6.5%) side by side.",
+        hi_s3_title: "Calculate EMIs & DPR Splits",
+        hi_s3_desc: "Check reducing-balance EMIs with 3-6 months zero-EMI moratorium grace periods and automatic Machinery vs. Working Capital DPR splits.",
+        hi_s4_title: "Locate Safe Banks & PDF",
+        hi_s4_desc: "Use the Bank Locator for real road routes to Net NPA-safe (< 8%) bank desks. Tick ready documents and download your PDF dossier.",
+        hi_cta_btn: "Start Finding Schemes Now →"
+    },
+    hi: {
+        hi_badge: "सिस्टम कार्यप्रणाली एवं मार्गदर्शिका",
+        hi_title: "स्कीमसाथी कैसे काम करता है",
+        hi_subtitle: "सरकारी कल्याणकारी योजनाओं को खोजने, रियायती ईएमआई की गणना करने और सुरक्षित बैंक डेस्क तुरंत प्राप्त करने में आपकी सहायता के लिए एक पारदर्शी मार्गदर्शिका।",
+        hi_prob_heading: "उद्यमियों के सामने आने वाली चुनौतियां",
+        hi_prob_desc: "छोटे व्यवसायियों और स्थानीय कारीगरों को अक्सर सरकार की सब्सिडी का लाभ नहीं मिल पाता क्योंकि जानकारी कई पोर्टलों पर बिखरी होती है। जटिल नियम और ऋण अस्वीकृत होने का डर बड़ी बाधाएं पैदा करते हैं।",
+        hi_sol_heading: "हमारा बुद्धिमान समाधान",
+        hi_sol_desc: "स्कीमसाथी आपके विशिष्ट आयु, श्रेणी, आय और व्यवसाय क्षेत्र के विरुद्ध सत्यापित पात्रता मानदंडों का एक नियम-आधारित इंजन के माध्यम से मिलान करता है—बिचौलियों को समाप्त करता है और प्रत्यक्ष वित्तीय पहुंच सुनिश्चित करता है।",
+        hi_pipe_title: "इंटरेक्टिव उपयोगकर्ता रोडमैप",
+        hi_pipe_sub: "रियायती ऋण प्राप्त करने की अपनी यात्रा का पता लगाने के लिए नीचे दिए गए चरणों पर कर्सर (hover) रखें",
+        hi_s1_title: "प्रोफाइल और व्यवसाय दर्ज करें",
+        hi_s1_desc: "'योजनाएं खोजें' पर जाएं, अपनी आयु, श्रेणी, आय (≤ ₹5 लाख), और स्थान भरें। आप बोलकर दर्ज करने (voice input) का भी उपयोग कर सकते हैं।",
+        hi_s2_title: "तुलना करें और मिलान जांचें",
+        hi_s2_desc: "मैच स्कोर के साथ रैंक की गई MoSJE योजनाएं देखें। ब्याज दरों (4% से 6.5%) की आमने-सामने तुलना करने के लिए 'तुलना करें' टूल का उपयोग करें।",
+        hi_s3_title: "ईएमआई और DPR विभाजन देखें",
+        hi_s3_desc: "3 से 6 महीने की शून्य-मूलधन मोराटोरियम छूट अवधि के साथ घटते-शेष ईएमआई और स्वचालित मशीनरी बनाम कार्यशील पूंजी DPR विभाजन जांचें।",
+        hi_s4_title: "सुरक्षित बैंक और पीडीएफ खोजें",
+        hi_s4_desc: "सुरक्षित (< 8% NPA) बैंक डेस्क के लिए वास्तविक सड़क मार्गों हेतु बैंक लोकेटर का उपयोग करें। तैयार दस्तावेजों को टिक करें और पीडीएफ डोजियर डाउनलोड करें।",
+        hi_cta_btn: "अब योजनाएं खोजना शुरू करें →"
+    }
+};
+
+function applyHowItWorksPageTranslation(lang) {
+    var dict = howItWorksPageDict[lang] || howItWorksPageDict.en;
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n');
+        if (dict[key]) el.innerText = dict[key];
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    var savedLang = localStorage.getItem('schemesathi_lang') || 'en';
+    applyHowItWorksPageTranslation(savedLang);
+
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'schemesathi_lang') {
+            applyHowItWorksPageTranslation(e.newValue);
+        }
+    });
+});
+</script>
+{% endblock %}

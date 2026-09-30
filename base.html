@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SchemeSathi | Concessional Credit Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <style>
+        .btn-lang-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            padding: 0.38rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-lang-toggle:hover {
+            background: #eff6ff;
+            border-color: #3b82f6;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Navigation Bar -->
+    <nav class="navbar">
+        <a href="/" class="nav-brand">
+            <div class="brand-icon-box">
+                <svg class="icon-svg" style="width:20px; height:20px;" viewBox="0 0 24 24">
+                    <line x1="3" y1="21" x2="21" y2="21"></line>
+                    <line x1="6" y1="21" x2="6" y2="10"></line>
+                    <line x1="10" y1="21" x2="10" y2="10"></line>
+                    <line x1="14" y1="21" x2="14" y2="10"></line>
+                    <line x1="18" y1="21" x2="18" y2="10"></line>
+                    <path d="M12 3L2 10h20L12 3z"></path>
+                </svg>
+            </div>
+            <div>
+                <div class="brand-title">SchemeSathi</div>
+                <div class="brand-subtitle" data-i18n="nav_sub">MoSJE Statutory Credit</div>
+            </div>
+        </a>
+
+        <div class="nav-links">
+            <a href="/" class="nav-link">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                <span data-i18n="nav_home">Home</span>
+            </a>
+            <a href="/profile" class="nav-link">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+                <span data-i18n="nav_schemes">Find Schemes</span>
+            </a>
+            <a href="/compare" class="nav-link">
+                <svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="18" rx="1"></rect><rect x="14" y="3" width="7" height="18" rx="1"></rect></svg>
+                <span data-i18n="nav_compare">Compare</span>
+            </a>
+            <a href="/calculator" class="nav-link">
+                <svg class="icon-svg" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="14.01"></line><line x1="12" y1="14" x2="12" y2="14.01"></line><line x1="8" y1="14" x2="8" y2="14.01"></line><line x1="16" y1="18" x2="16" y2="18.01"></line><line x1="12" y1="18" x2="12" y2="18.01"></line><line x1="8" y1="18" x2="8" y2="18.01"></line></svg>
+                <span data-i18n="nav_calculator">Calculator</span>
+            </a>
+            <a href="/locator" class="nav-link">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <span data-i18n="nav_locator">Bank Locator</span>
+            </a>
+
+            <a href="/about" class="nav-link">
+                <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                <span data-i18n="nav_about">About Us</span>
+            </a>
+
+            <a href="/how-it-works" class="nav-link">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                <span data-i18n="nav_how">How It Works</span>
+            </a>
+
+            <button type="button" id="btn-lang-toggle" onclick="togglePlatformLanguage()" class="btn-lang-toggle" title="Switch Language / भाषा बदलें">
+                <svg class="icon-svg" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                <span id="lang-current-label">EN</span>
+                <span style="color: #94a3b8;">|</span>
+                <span id="lang-target-label" style="font-weight: 800;">हिन्दी</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Clean Institutional Footer -->
+    <footer class="app-footer">
+        <div style="font-weight: 700; color: #475569; margin-bottom: 0.3rem;" data-i18n="footer_title">
+            SchemeSathi &bull; Pre-Screening System (SIH26092)
+        </div>
+        <div data-i18n="footer_sub">
+            Ministry of Social Justice &amp; Empowerment (MoSJE / NSFDC / NSKFDC) &bull; Government of India
+        </div>
+    </footer>
+
+    <script>
+        const i18nDictionary = {
+            en: {
+                nav_sub: "MoSJE Statutory Credit",
+                nav_home: "Home",
+                nav_schemes: "Find Schemes",
+                nav_compare: "Compare",
+                nav_calculator: "Calculator",
+                nav_locator: "Bank Locator",
+                nav_about: "About Us",
+                nav_how: "How It Works",
+                footer_title: "SchemeSathi • Pre-Screening System (SIH26092)",
+                footer_sub: "Ministry of Social Justice & Empowerment (MoSJE / NSFDC / NSKFDC) • Government of India",
+                
+                // Common Actions
+                back_rec: "Back to Recommendations",
+                next_btn: "Next Step",
+                back_btn: "Back",
+                view_details: "View Details & Prepare Papers",
+                download_guide: "Download Desk Guide (PDF)",
+                safe_filter: "Safe NPA Rule Active (< 8.0%)",
+                current_loc: "Your Current Location",
+                pin_map: "Pinpoint on Map",
+                directions: "Get Directions",
+
+                // Profile Stepper Step Labels
+                step_tag1: "Step 1 of 3",
+                step_tag2: "Step 2 of 3",
+                step_tag3: "Step 3 of 3",
+                step_nav1: "About You",
+                step_nav2: "Loan Need",
+                step_nav3: "Income & Place",
+
+                // Profile Page Keys
+                prof_title: "Tell us about yourself",
+                prof_subtitle: "Basic details required under MoSJE statutory guidelines.",
+                prof_age_label: "1. Your Age (Years) *",
+                prof_gender_label: "2. Gender *",
+                gender_f: "Female",
+                gender_m: "Male",
+                gender_o: "Other",
+                prof_cat_label: "3. Social Category *",
+                prof_edu_label: "4. Education Status",
+                prof_next_loan: "Next: Loan Need",
+                
+                prof_step2_title: "What do you need funds for?",
+                prof_step2_sub: "Select a standard trade template or enter your custom requirement.",
+                prof_trade_tpl: "Standard Trade Benchmark Quotation (Optional)",
+                prof_trade_subtext: "Auto-fills verified project cost & trade keywords compliant with MoSJE limits.",
+                prof_purpose_lbl: "Business Description / Trade Purpose *",
+                prof_mic_lbl: "Voice Input",
+                prof_listen_badge: "Listening... Speak your business requirement clearly",
+                prof_cost_lbl: "Required Project Cost (₹) *",
+                prof_cost_subtext: "Government provides 90% to 95% funding at concessional rates (4.0% to 6.5%).",
+                prof_next_income: "Next: Income & Location",
+                
+                prof_step3_title: "Income & Location",
+                prof_step3_sub: "Final checks to verify statutory compliance.",
+                prof_inc_lbl: "Annual Family Income (₹) *",
+                prof_inc_subtext: "Statutory ceiling is ₹5,00,000 for MoSJE/NSFDC welfare schemes.",
+                prof_place_lbl: "State & District *",
+                prof_gps_btn: "Auto-Detect via GPS",
+                prof_submit: "Find Matching Schemes",
+                prof_eval_title: "Evaluating Statutory Compliance...",
+                prof_eval_sub: "Executing MoSJE guidelines & NPA routing rules.",
+
+                // Dropdown Options
+                opt_edu_placeholder: "-- Select Your Education Level --",
+                opt_edu_school: "School Pass (10th / 12th)",
+                opt_edu_grad: "Graduate / Degree Holder",
+                opt_edu_coll: "Currently in College / Technical Institute",
+                opt_edu_none: "No Formal Schooling",
+
+                opt_trade_placeholder: "-- Select a Standard Trade Template (Optional) --",
+                opt_trade_tailor: "Tailoring Boutique Unit (2 Machines + Fabric) - ₹85,000",
+                opt_trade_rickshaw: "E-Rickshaw Commercial Battery Vehicle - ₹2,20,000",
+                opt_trade_kirana: "Kirana & Retail Grocery Store - ₹1,40,000",
+                opt_trade_cobbler: "Footwear Repair & Artisan Cobbler Trade - ₹45,000",
+                opt_trade_btech: "Higher Technical Education (B.Tech / BCA Degree) - ₹4,50,000",
+
+                opt_state_placeholder: "-- Select State / UT --",
+                opt_dist_placeholder: "-- Select District --"
+            },
+            hi: {
+                nav_sub: "सामाजिक न्याय मंत्रालय ऋण सेवा",
+                nav_home: "होम",
+                nav_schemes: "योजनाएं खोजें",
+                nav_compare: "तुलना करें",
+                nav_calculator: "कैलकुलेटर",
+                nav_locator: "बैंक केंद्र खोजें",
+                nav_about: "हमारे बारे में",
+                nav_how: "यह कैसे काम करता है",
+                footer_title: "स्कीमसाथी • पात्रता पूर्व-सत्यापन प्रणाली (SIH26092)",
+                footer_sub: "सामाजिक न्याय और अधिकारिता मंत्रालय (MoSJE / NSFDC / NSKFDC) • भारत सरकार",
+                
+                // Common Actions
+                back_rec: "← सिफारिशों पर वापस जाएं",
+                next_btn: "आगे बढ़ें →",
+                back_btn: "← पीछे जाएं",
+                view_details: "विवरण देखें एवं दस्तावेज तैयार करें →",
+                download_guide: "बैंक डेस्क गाइड डाउनलोड करें (PDF)",
+                safe_filter: "सुरक्षित बैंक कोटा सक्रिय (< 8.0% NPA)",
+                current_loc: "आपका वर्तमान स्थान",
+                pin_map: "नक्शे पर देखें",
+                directions: "दिशा-निर्देश देखें →",
+
+                // Profile Stepper Step Labels
+                step_tag1: "चरण 1 / 3",
+                step_tag2: "चरण 2 / 3",
+                step_tag3: "चरण 3 / 3",
+                step_nav1: "व्यक्तिगत विवरण",
+                step_nav2: "ऋण आवश्यकता",
+                step_nav3: "आय एवं स्थान",
+
+                // Profile Page Keys
+                prof_title: "अपने बारे में जानकारी दें",
+                prof_subtitle: "सामाजिक न्याय मंत्रालय के नियमों के अनुसार आवश्यक विवरण।",
+                prof_age_label: "1. आपकी आयु (वर्ष) *",
+                prof_gender_label: "2. लिंग *",
+                gender_f: "महिला",
+                gender_m: "पुरुष",
+                gender_o: "अन्य",
+                prof_cat_label: "3. सामाजिक श्रेणी *",
+                prof_edu_label: "4. शिक्षा का स्तर",
+                prof_next_loan: "अगला: ऋण आवश्यकता →",
+                
+                prof_step2_title: "आपको किस कार्य हेतु ऋण चाहिए?",
+                prof_step2_sub: "मानक व्यवसाय चुनें या अपना विवरण भरें।",
+                prof_trade_tpl: "मानक व्यवसाय कोटेशन (वैकल्पिक)",
+                prof_trade_subtext: "MoSJE नियमों के अनुसार परियोजना लागत और व्यवसाय का प्रकार स्वतः भरता है।",
+                prof_purpose_lbl: "व्यवसाय का विवरण / उद्देश्य *",
+                prof_mic_lbl: "बोलकर दर्ज करें",
+                prof_listen_badge: "सुन रहे हैं... कृपया अपने व्यवसाय का विवरण स्पष्ट बोलें",
+                prof_cost_lbl: "आवश्यक परियोजना लागत (₹) *",
+                prof_cost_subtext: "सरकार रियायती ब्याज दरों (4.0% से 6.5%) पर 90% से 95% तक वित्तीय सहायता प्रदान करती है।",
+                prof_next_income: "अगला: आय एवं स्थान →",
+                
+                prof_step3_title: "वार्षिक आय एवं निवास स्थान",
+                prof_step3_sub: "सरकारी नियमों के सत्यापन हेतु अंतिम विवरण।",
+                prof_inc_lbl: "परिवार की कुल वार्षिक आय (₹) *",
+                prof_inc_subtext: "MoSJE/NSFDC योजनाओं के लिए परिवार की वार्षिक आय ₹5,00,000 या उससे कम होनी अनिवार्य है।",
+                prof_place_lbl: "राज्य एवं जिला *",
+                prof_gps_btn: "GPS से स्वतः पता लगाएं",
+                prof_submit: "पात्र योजनाएं खोजें →",
+                prof_eval_title: "नियमों का सत्यापन किया जा रहा है...",
+                prof_eval_sub: "MoSJE पात्रता एवं बैंक सुरक्षा नियमों की जांच जारी है।",
+
+                // Dropdown Options
+                opt_edu_placeholder: "-- अपनी शिक्षा का स्तर चुनें --",
+                opt_edu_school: "विद्यालय उत्तीर्ण (10वीं / 12वीं)",
+                opt_edu_grad: "स्नातक / डिग्री धारक",
+                opt_edu_coll: "कॉलेज / तकनीकी संस्थान में अध्ययनरत",
+                opt_edu_none: "कोई औपचारिक शिक्षा नहीं",
+
+                opt_trade_placeholder: "-- मानक व्यवसाय कोटेशन चुनें (वैकल्पिक) --",
+                opt_trade_tailor: "सिलाई बुटीक इकाई (2 मशीनें + कपड़ा) - ₹85,000",
+                opt_trade_rickshaw: "ई-रिक्शा वाणिज्यिक बैटरी वाहन - ₹2,20,000",
+                opt_trade_kirana: "किराना एवं खुदरा जनरल स्टोर - ₹1,40,000",
+                opt_trade_cobbler: "जूता-चप्पल मरम्मत एवं कारीगर कार्य - ₹45,000",
+                opt_trade_btech: "उच्च तकनीकी शिक्षा (बी.टेक / बीसीए डिग्री) - ₹4,50,000",
+
+                opt_state_placeholder: "-- राज्य / केंद्र शासित प्रदेश चुनें --",
+                opt_dist_placeholder: "-- जिला चुनें --"
+            }
+        };
+
+        function applyLanguage(lang) {
+            localStorage.setItem('schemesathi_lang', lang);
+            
+            const curLabel = document.getElementById('lang-current-label');
+            const tarLabel = document.getElementById('lang-target-label');
+            if (curLabel && tarLabel) {
+                if (lang === 'hi') {
+                    curLabel.innerText = "हिन्दी";
+                    tarLabel.innerText = "EN";
+                } else {
+                    curLabel.innerText = "EN";
+                    tarLabel.innerText = "हिन्दी";
+                }
+            }
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18nDictionary[lang] && i18nDictionary[lang][key]) {
+                    el.innerText = i18nDictionary[lang][key];
+                }
+            });
+
+            document.querySelectorAll('[data-i18n-opt]').forEach(el => {
+                const key = el.getAttribute('data-i18n-opt');
+                if (i18nDictionary[lang] && i18nDictionary[lang][key]) {
+                    el.innerText = i18nDictionary[lang][key];
+                }
+            });
+
+            document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+                const key = el.getAttribute('data-i18n-ph');
+                if (i18nDictionary[lang] && i18nDictionary[lang][key]) {
+                    el.setAttribute('placeholder', i18nDictionary[lang][key]);
+                }
+            });
+
+            // Instant Live Triggers for all page translation scripts without reload
+            if (typeof applyRecommendationsPageTranslation === 'function') applyRecommendationsPageTranslation(lang);
+            if (typeof applyDetailsPageTranslation === 'function') applyDetailsPageTranslation(lang);
+            if (typeof applyComparePageTranslation === 'function') applyComparePageTranslation(lang);
+            if (typeof applyCalculatorPageTranslation === 'function') applyCalculatorPageTranslation(lang);
+            if (typeof applyLocatorPageTranslation === 'function') applyLocatorPageTranslation(lang);
+            if (typeof applyHomePageTranslation === 'function') applyHomePageTranslation(lang);
+            if (typeof renderStateDropdownLocalized === 'function') renderStateDropdownLocalized(lang);
+            if (typeof updateProfilePlaceholders === 'function') updateProfilePlaceholders(lang);
+        }
+
+        function togglePlatformLanguage() {
+            const currentLang = localStorage.getItem('schemesathi_lang') || 'en';
+            const newLang = (currentLang === 'en') ? 'hi' : 'en';
+            applyLanguage(newLang);
+            window.dispatchEvent(new StorageEvent('storage', { key: 'schemesathi_lang', newValue: newLang }));
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedLang = localStorage.getItem('schemesathi_lang') || 'en';
+            applyLanguage(savedLang);
+        });
+    </script>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

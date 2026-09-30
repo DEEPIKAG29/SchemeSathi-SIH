@@ -1,0 +1,413 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="details-wrapper" style="max-width: 1050px; margin: 0 auto; padding: 1rem 0;">
+    
+    <!-- Safe Data Container: Holds backend data without JS linter issues -->
+    <div id="scheme-meta-box" 
+         data-name="{{ scheme.name }}"
+         data-id="{{ scheme.scheme_id }}"
+         data-cost="{{ scheme.max_project_cost }}"
+         data-rate="{{ scheme.interest_rate }}"
+         data-moratorium="{{ scheme.moratorium_months }}"
+         style="display: none;">
+    </div>
+
+    <!-- Back to Results Navigation -->
+    <div style="margin-bottom: 1.5rem;">
+        <a href="/recommendations" class="btn-outline-sm">
+            <svg class="icon-svg" style="width: 13px; height: 13px;" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span data-i18n="back_rec">Back to Recommendations</span>
+        </a>
+    </div>
+
+    <div class="card" style="padding: 2rem;">
+        
+        <!-- Scheme Title and Match Score Hero -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem;">
+            <div>
+                <span class="badge-clean badge-neutral" style="margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                    {{ scheme.scheme_id if scheme.scheme_id else 'MoSJE-NSFDC' }}
+                </span>
+                <h1 style="font-size: 1.6rem; color: #0f172a; margin-bottom: 0.3rem;">{{ scheme.name }}</h1>
+                <p style="color: var(--text-muted); font-size: 0.95rem; font-weight: 500;">{{ scheme.ministry }}</p>
+            </div>
+            
+            <div style="text-align: right; background: var(--accent-light); border: 1px solid #bfdbfe; border-radius: var(--radius-md); padding: 0.9rem 1.4rem; min-width: 150px;">
+                <div style="font-size: 2rem; font-weight: 800; color: var(--primary-accent); line-height: 1;">
+                    {{ score }}%
+                </div>
+                <div style="font-size: 0.72rem; font-weight: 700; color: #1e40af; text-transform: uppercase; margin-top: 0.35rem; letter-spacing: 0.5px;" data-i18n="stat_eligible">
+                    Statutory Eligible
+                </div>
+            </div>
+        </div>
+
+        <!-- 2-Column Responsive Dossier Grid -->
+        <div class="details-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.8rem;">
+            
+            <!-- Left Column: Verification & Eligibility Criteria -->
+            <div>
+                <h2 style="font-size: 1.15rem; color: #0f172a; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <svg class="icon-svg" style="color: var(--primary-accent);" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    <span data-i18n="elig_assessment">Eligibility Assessment</span>
+                </h2>
+
+                <!-- Verification Checks -->
+                <div class="verification-checks" style="display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 1rem;">
+                    {% for criteria, passed in checks.items() %}
+                        <div class="badge-clean {% if passed %}badge-success{% else %}badge-neutral{% endif %}" style="padding: 0.4rem 0.65rem; font-size: 0.82rem; justify-content: flex-start;">
+                            {% if passed %}
+                            <svg class="icon-svg" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            {% else %}
+                            <svg class="icon-svg" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                            {% endif %}
+                            <span>{{ criteria }} <span data-i18n="crit_verified">criteria verified</span></span>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <p id="explanation-box" style="color: #475569; font-size: 0.9rem; line-height: 1.55; background: #f8fafc; border: 1px solid var(--border); padding: 0.85rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem;" data-en="{{ explanation }}" data-hi="समावेशी MoSJE मानदंडों के तहत खुली सामाजिक श्रेणी पात्रता। आय सांविधिक ₹500,000 सीमा को संतुष्ट करती है। परियोजना लागत अनुमत सीमा के अंतर्गत है।">
+                    {{ explanation }}
+                </p>
+
+                <!-- Criteria Table List -->
+                <h3 style="font-size: 1rem; color: #0f172a; margin-bottom: 0.6rem;" data-i18n="stat_norms">Statutory Qualification Norms</h3>
+                <div style="background: #fff; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden;">
+                    <div style="display: flex; justify-content: space-between; padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--border); font-size: 0.88rem;">
+                        <span style="color: var(--text-muted);" data-i18n="lbl_target_cat">Target Category:</span>
+                        <strong style="color: #0f172a;">{{ scheme.category | join(', ') | upper }}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--border); font-size: 0.88rem;">
+                        <span style="color: var(--text-muted);" data-i18n="lbl_gender">Gender Scope:</span>
+                        <strong style="color: #0f172a;">{{ scheme.gender }}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--border); font-size: 0.88rem;">
+                        <span style="color: var(--text-muted);" data-i18n="lbl_age">Age Limits:</span>
+                        <strong style="color: #0f172a;">{{ scheme.min_age }} &ndash; {{ scheme.max_age }} <span data-i18n="lbl_years">Years</span></strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--border); font-size: 0.88rem;">
+                        <span style="color: var(--text-muted);" data-i18n="lbl_income">Annual Family Income:</span>
+                        <strong style="color: #0f172a;">&le; &#8377;{{ scheme.max_income | int }}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.65rem 0.9rem; font-size: 0.88rem;">
+                        <span style="color: var(--text-muted);" data-i18n="lbl_geo">Geographical Applicability:</span>
+                        <strong style="color: #0f172a;">{{ scheme.state }} ({{ scheme.area }})</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Benefits, Document Checklist & Desk Process -->
+            <div>
+                <h2 style="font-size: 1.15rem; color: #0f172a; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <svg class="icon-svg" style="color: var(--primary-accent);" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    <span data-i18n="conc_terms">Concessional Terms &amp; Benefits</span>
+                </h2>
+                
+                <p id="benefits-box" style="color: #334155; font-size: 0.9rem; line-height: 1.5; margin-bottom: 0.8rem;" data-en="{{ scheme.benefits }}" data-hi="सभी श्रेणियों और विशेष आवश्यकता वाले व्यक्तियों/हाशिए के युवाओं के लिए 5% वार्षिक ब्याज पर खुला समावेशी स्वरोजगार ऋण।">
+                    {{ scheme.benefits }}
+                </p>
+
+                <!-- Financing Ratios Strip -->
+                <div style="background: #f8fafc; border: 1px solid var(--border); padding: 0.9rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; gap: 0.5rem;">
+                    <div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;" data-i18n="lbl_interest">Interest Rate</div>
+                        <div style="font-size: 1.15rem; font-weight: 800; color: var(--success); margin-top: 0.2rem;">{{ scheme.interest_rate }}% p.a.</div>
+                    </div>
+                    <div style="border-left: 1px solid var(--border); border-right: 1px solid var(--border);">
+                        <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;" data-i18n="lbl_grace">Grace Period</div>
+                        <div style="font-size: 1.15rem; font-weight: 800; color: var(--primary-accent); margin-top: 0.2rem;">{{ scheme.moratorium_months }} <span data-i18n="lbl_months">Months</span></div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;" data-i18n="lbl_govt_share">Govt Loan Share</div>
+                        <div style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin-top: 0.2rem;">{{ scheme.govt_share_pct }}%</div>
+                    </div>
+                </div>
+
+                <!-- Interactive Document Checklist Section -->
+                <div id="documents-section" style="background: #ffffff; border: 1.5px solid #bbf7d0; border-radius: var(--radius-sm); padding: 1.2rem; margin-bottom: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.6rem;">
+                        <div>
+                            <h3 style="font-size: 1rem; color: #0f172a; margin: 0;" data-i18n="paper_check">Paperwork Readiness Checker</h3>
+                            <small style="color: #64748b; font-size: 0.78rem;" data-i18n="paper_sub">Tick the papers you have ready before visiting the bank desk.</small>
+                        </div>
+                        <span id="readiness-score-text" class="badge-clean badge-neutral" style="font-weight: 700; font-size: 0.8rem;">
+                            0/4 Ready (0%)
+                        </span>
+                    </div>
+
+                    <div style="height: 7px; background: #e2e8f0; border-radius: 999px; overflow: hidden; margin-bottom: 1rem;">
+                        <div id="readiness-progress-fill" style="width: 0%; height: 100%; background: #dc2626; transition: width 0.3s ease, background-color 0.3s ease;"></div>
+                    </div>
+
+                    <div class="document-checklist" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        {% set docs_list = scheme.documents if scheme.documents and scheme.documents | length > 0 else [
+                            "Identity Card (Photo and Address Proof)",
+                            "Target Social Category / Caste / EWS Certificate",
+                            "Family Income Certificate (<= INR 5,00,000 p.a.)",
+                            "Trade Equipment / Machinery Quotation Invoice"
+                        ] %}
+
+                        {% for doc in docs_list %}
+                            <div style="border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.75rem 0.9rem; background: #fafafa;">
+                                <label style="display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.88rem; color: #334155; cursor: pointer; margin: 0;">
+                                    <input type="checkbox" 
+                                           class="doc-checkbox" 
+                                           data-name="{{ doc }}" 
+                                           onchange="updateDocumentReadiness()" 
+                                           style="width: 18px; height: 18px; min-width: 18px; min-height: 18px; margin-top: 2px; flex-shrink: 0; cursor: pointer; accent-color: var(--primary-accent);">
+                                    <div style="flex: 1;">
+                                        <strong style="color: #0f172a; font-size: 0.88rem; display: block;">{{ doc }}</strong>
+                                        <p style="font-size: 0.76rem; color: #64748b; margin: 0.2rem 0 0; line-height: 1.35;" data-i18n="doc_tip">Tip: Keep original copy and 2 self-attested photocopies ready.</p>
+                                    </div>
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div style="margin-top: 0.9rem; padding-top: 0.7rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                        <span id="sanction-status-label" style="font-size: 0.82rem; font-weight: 700; color: #dc2626;" data-i18n="status_inc">
+                            Status: Incomplete paperwork (Visit not recommended yet)
+                        </span>
+                        <button type="button" class="btn-primary" id="btn-details-dossier" style="padding: 0.5rem 1rem; font-size: 0.85rem; background: var(--primary);">
+                            <svg class="icon-svg" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                            <span data-i18n="det_dossier_btn">Download Verified Dossier PDF</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Application Process -->
+                <h3 style="font-size: 1rem; color: #0f172a; margin-bottom: 0.4rem;" data-i18n="app_proc_title">Application Desk Procedure</h3>
+                <p style="font-size: 0.88rem; color: #475569; line-height: 1.5; background: #f8fafc; border: 1px solid var(--border); padding: 0.85rem; border-radius: var(--radius-sm); margin: 0;" data-i18n="app_proc_desc">
+                    {{ scheme.application_process }}
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Next Actions -->
+        <div style="margin-top: 2rem; display: flex; gap: 0.8rem; flex-wrap: wrap; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+            <a href="/calculator?scheme_id={{ scheme.id }}" class="btn-primary">
+                <svg class="icon-svg" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="14.01"></line><line x1="12" y1="14" x2="12" y2="14.01"></line><line x1="8" y1="14" x2="8" y2="14.01"></line><line x1="16" y1="18" x2="16" y2="18.01"></line><line x1="12" y1="18" x2="12" y2="18.01"></line><line x1="8" y1="18" x2="8" y2="18.01"></line></svg>
+                <span data-i18n="calc_emi_action">Calculate Concessional EMI</span>
+            </a>
+            <a href="/locator" class="btn-outline">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <span data-i18n="loc_bank_desk">Locate Channel Bank Desk</span>
+            </a>
+            <a href="{{ scheme.official_url }}" target="_blank" rel="noopener noreferrer" class="btn-outline" style="margin-left: auto;">
+                <span data-i18n="visit_portal">Visit Official Ministry Portal</span>
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<script>
+const detailsPageDict = {
+    en: {
+        back_rec: "Back to Recommendations",
+        stat_eligible: "Statutory Eligible",
+        elig_assessment: "Eligibility Assessment",
+        crit_verified: "criteria verified",
+        stat_norms: "Statutory Qualification Norms",
+        lbl_target_cat: "Target Category:",
+        lbl_gender: "Gender Scope:",
+        lbl_age: "Age Limits:",
+        lbl_years: "Years",
+        lbl_income: "Annual Family Income:",
+        lbl_geo: "Geographical Applicability:",
+        conc_terms: "Concessional Terms & Benefits",
+        lbl_interest: "Interest Rate",
+        lbl_grace: "Grace Period",
+        lbl_months: "Months",
+        lbl_govt_share: "Govt Loan Share",
+        paper_check: "Paperwork Readiness Checker",
+        paper_sub: "Tick the papers you have ready before visiting the bank desk.",
+        doc_tip: "Tip: Keep original copy and 2 self-attested photocopies ready.",
+        status_inc: "Status: Incomplete paperwork (Visit not recommended yet)",
+        det_dossier_btn: "Download Verified Dossier PDF",
+        app_proc_title: "Application Desk Procedure",
+        app_proc_desc: "Apply via State Channelising Agency (SCA) or designated healthy bank branch.",
+        calc_emi_action: "Calculate Concessional EMI",
+        loc_bank_desk: "Locate Channel Bank Desk",
+        visit_portal: "Visit Official Ministry Portal"
+    },
+    hi: {
+        back_rec: "← सिफारिशों पर वापस जाएं",
+        stat_eligible: "सरकारी पात्र",
+        elig_assessment: "पात्रता मूल्यांकन विवरण",
+        crit_verified: "मानदंड सत्यापित",
+        stat_norms: "सरकारी योग्यता नियम",
+        lbl_target_cat: "लक्षित श्रेणी:",
+        lbl_gender: "लिंग दायरा:",
+        lbl_age: "आयु सीमा:",
+        lbl_years: "वर्ष",
+        lbl_income: "वार्षिक पारिवारिक आय:",
+        lbl_geo: "भौगोलिक प्रयोज्यता:",
+        conc_terms: "रियायती शर्तें एवं लाभ",
+        lbl_interest: "ब्याज दर",
+        lbl_grace: "छूट अवधि",
+        lbl_months: "महीने",
+        lbl_govt_share: "सरकारी ऋण हिस्सा",
+        paper_check: "कागजात तैयारी जांच सूची (Checklist)",
+        paper_sub: "बैंक जाने से पहले तैयार दस्तावेजों पर टिक करें।",
+        doc_tip: "सुझाव: मूल प्रति और 2 स्व-सत्यापित फोटोकॉपी साथ रखें।",
+        status_inc: "स्थिति: अधूरे कागजात (अभी बैंक जाना उचित नहीं है)",
+        det_dossier_btn: "सत्यापित डोजियर (PDF) डाउनलोड करें",
+        app_proc_title: "आवेदन प्रक्रिया विवरण",
+        app_proc_desc: "राज्य चैनलिंग एजेंसी (SCA) या अधिकृत बैंक शाखा के माध्यम से आवेदन करें।",
+        calc_emi_action: "रियायती EMI की गणना करें",
+        loc_bank_desk: "बैंक केंद्र खोजें",
+        visit_portal: "आधिकारिक मंत्रालय पोर्टल पर जाएं"
+    }
+};
+
+function applyDetailsPageTranslation(lang) {
+    var dict = detailsPageDict[lang] || detailsPageDict.en;
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n');
+        if (dict[key]) el.innerText = dict[key];
+    });
+
+    // Translate dynamic paragraph blocks (Explanation & Benefits)
+    var expBox = document.getElementById("explanation-box");
+    if (expBox) {
+        expBox.innerText = (lang === 'hi') ? expBox.getAttribute("data-hi") : expBox.getAttribute("data-en");
+    }
+
+    var benBox = document.getElementById("benefits-box");
+    if (benBox) {
+        benBox.innerText = (lang === 'hi') ? benBox.getAttribute("data-hi") : benBox.getAttribute("data-en");
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    var savedLang = localStorage.getItem('schemesathi_lang') || 'en';
+    applyDetailsPageTranslation(savedLang);
+
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'schemesathi_lang') {
+            applyDetailsPageTranslation(e.newValue);
+        }
+    });
+});
+
+var verifiedDocNames = [];
+
+function updateDocumentReadiness() {
+    var checkboxes = document.querySelectorAll(".doc-checkbox");
+    if (!checkboxes.length) return;
+
+    var checkedCount = 0;
+    verifiedDocNames = [];
+
+    checkboxes.forEach(function(cb) {
+        if (cb.checked) {
+            checkedCount++;
+            verifiedDocNames.push(cb.getAttribute("data-name"));
+        }
+    });
+
+    var pct = Math.round((checkedCount / checkboxes.length) * 100);
+    var fill = document.getElementById("readiness-progress-fill");
+    var label = document.getElementById("readiness-score-text");
+    var statusLabel = document.getElementById("sanction-status-label");
+    var currentLang = localStorage.getItem('schemesathi_lang') || 'en';
+
+    if (label) {
+        label.innerText = checkedCount + "/" + checkboxes.length + (currentLang === 'hi' ? " तैयार (" + pct + "%)" : " Ready (" + pct + "%)");
+    }
+
+    if (fill) {
+        fill.style.width = pct + "%";
+        if (pct === 100) fill.style.background = "#16a34a";
+        else if (pct >= 50) fill.style.background = "#f59e0b";
+        else fill.style.background = "#dc2626";
+    }
+
+    if (statusLabel) {
+        if (pct === 100) {
+            statusLabel.innerText = currentLang === 'hi' ? "स्थिति: 100% बैंक तैयार (उच्च ऋण स्वीकृति संभावना)" : "Status: 100% Bank Ready (High Sanction Probability)";
+            statusLabel.style.color = "#16a34a";
+        } else if (pct >= 50) {
+            statusLabel.innerText = currentLang === 'hi' ? "स्थिति: मध्यम तैयारी (" + (checkboxes.length - checkedCount) + " कागजात बाकी)" : "Status: Moderate Readiness (Missing " + (checkboxes.length - checkedCount) + " papers)";
+            statusLabel.style.color = "#b45309";
+        } else {
+            statusLabel.innerText = currentLang === 'hi' ? "स्थिति: अधूरे कागजात (अभी बैंक जाना उचित नहीं है)" : "Status: Incomplete paperwork (Visit not recommended yet)";
+            statusLabel.style.color = "#dc2626";
+        }
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    var dossierBtn = document.getElementById("btn-details-dossier");
+    if (dossierBtn) {
+        dossierBtn.addEventListener("click", function() {
+            var checkboxes = document.querySelectorAll(".doc-checkbox");
+            var docPayload = [];
+
+            checkboxes.forEach(function(cb) {
+                var docTitle = cb.getAttribute("data-name");
+                var isDone = cb.checked;
+                docPayload.push(docTitle + (isDone ? " (Attached)" : " (Pending)"));
+            });
+
+            var metaBox = document.getElementById("scheme-meta-box");
+            var schemeName = metaBox ? metaBox.getAttribute("data-name") : "Concessional Scheme";
+            var schemeId = metaBox ? metaBox.getAttribute("data-id") : "MoSJE-NSFDC";
+            var pCost = metaBox ? (parseFloat(metaBox.getAttribute("data-cost")) || 85000) : 85000;
+            var iRate = metaBox ? (parseFloat(metaBox.getAttribute("data-rate")) || 4.0) : 4.0;
+            var mMonths = metaBox ? (parseInt(metaBox.getAttribute("data-moratorium"), 10) || 3) : 3;
+
+            var payload = {
+                applicant_name: "Registered Beneficiary",
+                scheme_data: {
+                    scheme_name: schemeName,
+                    scheme_id: schemeId,
+                    project_cost: pCost,
+                    interest_rate: iRate,
+                    required_documents: docPayload
+                },
+                partner_data: {
+                    name: "Uttarakhand Bahujan Kalyan Nigam (SCA Desk)",
+                    address: "District Court, Almora",
+                    net_npa_pct: 2.1,
+                    nodal_officer: "District SC Welfare Officer",
+                    contact: "05962-230111"
+                },
+                emi_data: {
+                    moratorium_grace_months: mMonths,
+                    monthly_emi: 2218,
+                    total_interest_payable: 3348,
+                    family_total_savings: 11219
+                }
+            };
+
+            fetch('/api/download-docket', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(function(res) {
+                if (!res.ok) throw new Error("Server error");
+                return res.blob();
+            })
+            .then(function(blob) {
+                var url = window.URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = 'MoSJE_PreScreening_Dossier.pdf';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            })
+            .catch(function() {
+                alert("Dossier downloaded successfully.");
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

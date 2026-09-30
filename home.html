@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto; padding: 1rem 0;">
+    
+    <!-- Hero Section -->
+    <div style="text-align: center; padding: 2.5rem 1rem 2rem;">
+        <div class="badge-clean badge-neutral" style="margin-bottom: 1rem; padding: 0.35rem 0.8rem; font-size: 0.82rem;">
+            <svg class="icon-svg" style="width: 14px; height: 14px; color: var(--primary-accent);" viewBox="0 0 24 24">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            <span data-i18n="hero_badge">MoSJE / NSFDC Statutory Credit Initiative (SIH26092)</span>
+        </div>
+
+        <h1 style="font-size: 2.3rem; font-weight: 800; line-height: 1.25; color: #0f172a; margin-bottom: 0.8rem;">
+            <span data-i18n="hero_title_1">Direct Concessional Credit Access for</span> <br>
+            <span style="color: var(--primary-accent);" data-i18n="hero_title_2">Artisans &amp; Micro-Entrepreneurs</span>
+        </h1>
+
+        <p style="font-size: 1.05rem; color: var(--text-muted); max-width: 680px; margin: 0 auto 2rem; line-height: 1.6;" data-i18n="hero_desc">
+            Find targeted low-interest government loan schemes (4% to 6.5% p.a.) with zero collateral, capital subsidies, and pre-screened bank desks.
+        </p>
+    </div>
+
+    <!-- Quick Eligibility Scanner Card -->
+    <div class="card" style="padding: 2rem; border-top: 4px solid var(--primary-accent); box-shadow: var(--shadow-md);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+                <h2 style="font-size: 1.25rem; font-weight: 700; color: #0f172a;" data-i18n="scanner_title">Quick Scheme Eligibility Check</h2>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.2rem;" data-i18n="scanner_sub">
+                    No complex login required. Select your basic profile to scan active government schemes.
+                </p>
+            </div>
+            <span class="badge-clean badge-success">
+                <svg class="icon-svg" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span data-i18n="instant_prescreen">Instant Pre-Screening</span>
+            </span>
+        </div>
+
+        <form action="/profile" method="GET">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.2rem; margin-bottom: 1.5rem;">
+                
+                <!-- Target Category -->
+                <div>
+                    <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #334155; margin-bottom: 0.4rem;" data-i18n="lbl_beneficiary_cat">
+                        Beneficiary Category:
+                    </label>
+                    <select name="pre_cat" style="width: 100%; padding: 0.65rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.9rem; background: #fff;">
+                        <option value="sc" data-i18n-opt="opt_sc">Scheduled Caste (SC)</option>
+                        <option value="safai_karamchari" data-i18n-opt="opt_safai">Safai Karamchari / Worker</option>
+                        <option value="artisan" data-i18n-opt="opt_artisan">Handicraft Artisan</option>
+                        <option value="general" data-i18n-opt="opt_general">Other / General</option>
+                    </select>
+                </div>
+
+                <!-- Gender -->
+                <div>
+                    <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #334155; margin-bottom: 0.4rem;" data-i18n="lbl_gender">
+                        Entrepreneur Gender:
+                    </label>
+                    <select name="pre_gender" style="width: 100%; padding: 0.65rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.9rem; background: #fff;">
+                        <option value="female" data-i18n-opt="opt_female">Female (Special 4% MSY Quota)</option>
+                        <option value="male" data-i18n-opt="opt_male">Male</option>
+                        <option value="other" data-i18n-opt="opt_other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Budget Needed -->
+                <div>
+                    <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #334155; margin-bottom: 0.4rem;" data-i18n="lbl_budget">
+                        Estimated Project Budget:
+                    </label>
+                    <select name="pre_cost" style="width: 100%; padding: 0.65rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.9rem; background: #fff;">
+                        <option value="85000" data-i18n-opt="opt_b1">₹85,000 (Small Enterprise / Tailoring)</option>
+                        <option value="140000" data-i18n-opt="opt_b2">₹1,40,000 (Micro Credit Ceiling)</option>
+                        <option value="300000" data-i18n-opt="opt_b3">₹3,00,000 (Equipment / Transport)</option>
+                        <option value="500000" data-i18n-opt="opt_b4">₹5,00,000 (Term Loan Max)</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <!-- Submit Action -->
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; border-top: 1px solid var(--border); padding-top: 1.2rem;">
+                <div style="display: flex; gap: 1.5rem; font-size: 0.82rem; color: var(--text-muted);">
+                    <span style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                        <svg class="icon-svg" style="width: 15px; height: 15px; color: var(--success);" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span data-i18n="zero_fee">Zero Application Fee</span>
+                    </span>
+                    <span style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                        <svg class="icon-svg" style="width: 15px; height: 15px; color: var(--success);" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span data-i18n="govt_finacing">Up to 95% Govt Financing</span>
+                    </span>
+                </div>
+
+                <button type="submit" class="btn-primary" style="padding: 0.75rem 1.6rem; font-size: 0.95rem;">
+                    <span data-i18n="scan_btn">Scan Eligible Schemes</span>
+                    <svg class="icon-svg" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 3 Pillars of SchemeSathi -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2.5rem;">
+        
+        <div class="card" style="padding: 1.4rem;">
+            <div style="width: 42px; height: 42px; border-radius: var(--radius-sm); background: var(--accent-light); color: var(--primary-accent); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                <svg class="icon-svg" style="width: 22px; height: 22px;" viewBox="0 0 24 24">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+            <h3 style="font-size: 1.05rem; margin-bottom: 0.4rem; color: #0f172a;" data-i18n="pillar1_title">Rule-Based Eligibility</h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;" data-i18n="pillar1_desc">
+                Statutory matching across category quotas, ₹5.0L income ceilings, and project limits to prevent bank rejection.
+            </p>
+        </div>
+
+        <div class="card" style="padding: 1.4rem;">
+            <div style="width: 42px; height: 42px; border-radius: var(--radius-sm); background: var(--success-light); color: var(--success); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                <svg class="icon-svg" style="width: 22px; height: 22px;" viewBox="0 0 24 24">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                </svg>
+            </div>
+            <h3 style="font-size: 1.05rem; margin-bottom: 0.4rem; color: #0f172a;" data-i18n="pillar2_title">Prudential Bank Routing</h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;" data-i18n="pillar2_desc">
+                Directs applicants strictly to verified channel partners and bank branches maintaining Net NPA &lt; 8.0%.
+            </p>
+        </div>
+
+        <div class="card" style="padding: 1.4rem;">
+            <div style="width: 42px; height: 42px; border-radius: var(--radius-sm); background: #fff7ed; color: #ea580c; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                <svg class="icon-svg" style="width: 22px; height: 22px;" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+            </div>
+            <h3 style="font-size: 1.05rem; margin-bottom: 0.4rem; color: #0f172a;" data-i18n="pillar3_title">Moratorium Amortisation</h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;" data-i18n="pillar3_desc">
+                Calculates true reducing-balance EMIs with 3 to 6 months of zero-principal grace periods during enterprise setup.
+            </p>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+const homePageDict = {
+    en: {
+        hero_badge: "MoSJE / NSFDC Statutory Credit Initiative (SIH26092)",
+        hero_title_1: "Direct Concessional Credit Access for",
+        hero_title_2: "Artisans & Micro-Entrepreneurs",
+        hero_desc: "Find targeted low-interest government loan schemes (4% to 6.5% p.a.) with zero collateral, capital subsidies, and pre-screened bank desks.",
+        scanner_title: "Quick Scheme Eligibility Check",
+        scanner_sub: "No complex login required. Select your basic profile to scan active government schemes.",
+        instant_prescreen: "Instant Pre-Screening",
+        lbl_beneficiary_cat: "Beneficiary Category:",
+        opt_sc: "Scheduled Caste (SC)",
+        opt_safai: "Safai Karamchari / Worker",
+        opt_artisan: "Handicraft Artisan",
+        opt_general: "Other / General",
+        lbl_gender: "Entrepreneur Gender:",
+        opt_female: "Female (Special 4% MSY Quota)",
+        opt_male: "Male",
+        opt_other: "Other",
+        lbl_budget: "Estimated Project Budget:",
+        opt_b1: "₹85,000 (Small Enterprise / Tailoring)",
+        opt_b2: "₹1,40,000 (Micro Credit Ceiling)",
+        opt_b3: "₹3,00,000 (Equipment / Transport)",
+        opt_b4: "₹5,00,000 (Term Loan Max)",
+        zero_fee: "Zero Application Fee",
+        govt_finacing: "Up to 95% Govt Financing",
+        scan_btn: "Scan Eligible Schemes",
+        pillar1_title: "Rule-Based Eligibility",
+        pillar1_desc: "Statutory matching across category quotas, ₹5.0L income ceilings, and project limits to prevent bank rejection.",
+        pillar2_title: "Prudential Bank Routing",
+        pillar2_desc: "Directs applicants strictly to verified channel partners and bank branches maintaining Net NPA < 8.0%.",
+        pillar3_title: "Moratorium Amortisation",
+        pillar3_desc: "Calculates true reducing-balance EMIs with 3 to 6 months of zero-principal grace periods during enterprise setup."
+    },
+    hi: {
+        hero_badge: "सामाजिक न्याय मंत्रालय / NSFDC वैधानिक ऋण पहल (SIH26092)",
+        hero_title_1: "कारीगरों और सूक्ष्म-उद्यमियों के लिए",
+        hero_title_2: "प्रत्यक्ष रियायती ऋण पहुंच",
+        hero_desc: "बिना किसी गारंटी (कोलैटरल) के लक्षित कम ब्याज वाली सरकारी ऋण योजनाएं (4% से 6.5% वार्षिक) और सत्यापित बैंक केंद्र खोजें।",
+        scanner_title: "त्वरित योजना पात्रता जांच",
+        scanner_sub: "किसी जटिल लॉगिन की आवश्यकता नहीं है। सक्रिय सरकारी योजनाओं को स्कैन करने के लिए अपनी मूल प्रोफाइल चुनें।",
+        instant_prescreen: "तत्काल पूर्व-सत्यापन",
+        lbl_beneficiary_cat: "लाभार्थी श्रेणी:",
+        opt_sc: "अनुसूचित जाति (SC)",
+        opt_safai: "सफाई कर्मचारी / श्रमिक",
+        opt_artisan: "हस्तशिल्प कारीगर",
+        opt_general: "अन्य / सामान्य",
+        lbl_gender: "उद्यमी का लिंग:",
+        opt_female: "महिला (विशेष 4% MSY कोटा)",
+        opt_male: "पुरुष",
+        opt_other: "अन्य",
+        lbl_budget: "अनुमानित परियोजना बजट:",
+        opt_b1: "₹85,000 (छोटा उद्यम / सिलाई)",
+        opt_b2: "₹1,40,000 (सूक्ष्म ऋण सीमा)",
+        opt_b3: "₹3,00,000 (उपकरण / परिवहन)",
+        opt_b4: "₹5,00,000 (अवधि ऋण अधिकतम)",
+        zero_fee: "शून्य आवेदन शुल्क",
+        govt_finacing: "95% तक सरकारी वित्त पोषण",
+        scan_btn: "पात्र योजनाएं स्कैन करें",
+        pillar1_title: "नियम-आधारित पात्रता",
+        pillar1_desc: "बैंक अस्वीकृति को रोकने के लिए श्रेणी कोटे, ₹5.0 लाख आय सीमा और परियोजना सीमाओं पर वैधानिक मिलान।",
+        pillar2_title: "विवेकपूर्ण बैंक रूटिंग",
+        pillar2_desc: "आवेदकों को कड़ाई से सत्यापित चैनल भागीदारों और 8.0% से कम एनपीए (NPA) बनाए रखने वाली बैंक शाखाओं की ओर निर्देशित करता है।",
+        pillar3_title: "मोराटोरियम परिशोधन",
+        pillar3_desc: "उद्यम सेटअप के दौरान 3 से 6 महीने की शून्य-मूलधन छूट अवधि के साथ सटीक घटते-शेष (reducing-balance) EMI की गणना करता है।"
+    }
+};
+
+function applyHomePageTranslation(lang) {
+    var dict = homePageDict[lang] || homePageDict.en;
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n');
+        if (dict[key]) el.innerText = dict[key];
+    });
+
+    document.querySelectorAll('[data-i18n-opt]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n-opt');
+        if (dict[key]) el.innerText = dict[key];
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    var savedLang = localStorage.getItem('schemesathi_lang') || 'en';
+    applyHomePageTranslation(savedLang);
+
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'schemesathi_lang') {
+            applyHomePageTranslation(e.newValue);
+        }
+    });
+});
+</script>
+{% endblock %}

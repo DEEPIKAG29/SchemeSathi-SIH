@@ -1,0 +1,383 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 1050px; margin: 0 auto; padding: 1rem 0;">
+
+    <!-- Results Header -->
+    <div class="results-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h1 class="page-title" data-i18n="rec_title">Statutory Scheme Recommendations</h1>
+            <p class="page-subtitle" data-i18n="rec_subtitle">
+                Rule-verified matches under Ministry of Social Justice &amp; Empowerment (MoSJE / NSFDC / NSKFDC) credit guidelines[cite: 14].
+            </p>
+        </div>
+        <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+            <span class="badge-clean badge-neutral" style="font-family: monospace;">
+                REF: MoSJE-2026-{{ range(1000, 9999) | random }}
+            </span>
+            {% if top_match and other_matches %}
+            <a href="/compare?id1={{ top_match.id }}&id2={{ other_matches[0].id }}" class="btn-outline-sm" style="color: var(--primary-accent); border-color: #bfdbfe; background: var(--accent-light); font-weight: 700;">
+                <svg class="icon-svg" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="18" rx="1"></rect><rect x="14" y="3" width="7" height="18" rx="1"></rect></svg>
+                <span data-i18n="compare_top">Compare Top Matches</span>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Filter & Search Controls Strip -->
+    <div class="card controls-strip" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin-bottom: 1.5rem; padding: 0.9rem 1.2rem;">
+        <div style="flex: 1; min-width: 260px; position: relative;">
+            <input type="text" id="scheme-search-input" data-i18n-ph="search_ph" placeholder="Search by scheme name or keyword (e.g., MSY, Micro, Green)..." onkeyup="liveSearchSchemes()" style="width: 100%; padding: 0.55rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.88rem; background: #fff;">
+        </div>
+
+        <div style="display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 0.4rem;">
+                <label for="filter-type" style="font-size: 0.82rem; font-weight: 700; color: #475569;" data-i18n="type_lbl">Type:</label>
+                <select id="filter-type" onchange="applyFilterAndSort()" style="padding: 0.5rem 0.7rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.85rem; background: #fff;">
+                    <option value="All" data-i18n-opt="opt_all">All Categories</option>
+                    <option value="Micro" data-i18n-opt="opt_micro">Micro Credit (&le; &#8377;1.4L)</option>
+                    <option value="Term" data-i18n-opt="opt_term">Term Loan / Enterprise</option>
+                </select>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.4rem;">
+                <label for="sort-type" style="font-size: 0.82rem; font-weight: 700; color: #475569;" data-i18n="sort_lbl">Sort:</label>
+                <select id="sort-type" onchange="applyFilterAndSort()" style="padding: 0.5rem 0.7rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.85rem; background: #fff;">
+                    <option value="match_desc" data-i18n-opt="sort_fit">Highest Compatibility</option>
+                    <option value="rate_asc" data-i18n-opt="sort_rate">Lowest Interest Rate</option>
+                    <option value="name_asc" data-i18n-opt="sort_name">Scheme Name (A-Z)</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    {% if top_match %}
+    <!-- ==================== TOP COMPATIBILITY CARD ==================== -->
+    <div class="card scheme-item-card" 
+         id="top-match-container"
+         data-score="{{ top_match.score }}" 
+         data-name="{{ top_match.name }}" 
+         data-scheme-id="{{ top_match.scheme_id }}"
+         data-interest="{{ top_match.interest_rate }}"
+         data-moratorium="{{ top_match.moratorium_months }}"
+         data-cost="{{ top_match.max_project_cost }}"
+         data-benefit="{{ top_match.benefits }} {{ top_match.benefit_type }}"
+         style="border-top: 4px solid var(--primary-accent); padding: 1.8rem; margin-bottom: 2rem;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+            <span class="badge-clean badge-success">
+                <svg class="icon-svg" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span data-i18n="primary_rec">Primary Recommendation</span>
+            </span>
+            <div style="font-size: 0.88rem; font-weight: 700; color: var(--success); display: inline-flex; align-items: center; gap: 0.35rem;">
+                <span data-i18n="conc_rate">Concessional Rate:</span>
+                <span style="font-size: 1.05rem;">{{ top_match.interest_rate }}% p.a.</span>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr auto; gap: 1.5rem; align-items: start;">
+            <div>
+                <h2 style="font-size: 1.35rem; color: #0f172a; margin-bottom: 0.2rem;">{{ top_match.name }}</h2>
+                <div style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px;">
+                    {{ top_match.ministry }}
+                </div>
+                
+                <p style="margin: 0.9rem 0; font-size: 0.92rem; color: #334155; line-height: 1.55;">
+                    {{ top_match.benefits }}
+                </p>
+
+                <!-- Term Highlights -->
+                <div style="display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                    <span style="background: #f1f5f9; padding: 0.3rem 0.65rem; border-radius: var(--radius-sm); font-size: 0.8rem; color: #334155;">
+                        <strong data-i18n="govt_supp">Govt Support:</strong> {{ top_match.govt_share_pct }}%
+                    </span>
+                    <span style="background: #f1f5f9; padding: 0.3rem 0.65rem; border-radius: var(--radius-sm); font-size: 0.8rem; color: #334155;">
+                        <strong data-i18n="own_margin">Own Margin:</strong> {{ top_match.promoter_share_pct }}%
+                    </span>
+                    <span style="background: #f1f5f9; padding: 0.3rem 0.65rem; border-radius: var(--radius-sm); font-size: 0.8rem; color: #334155;">
+                        <strong data-i18n="grace_win">Grace Window:</strong> {{ top_match.moratorium_months }} Months
+                    </span>
+                </div>
+
+                <!-- Verification Pills -->
+                <div class="verification-checks" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    {% if top_match.checks %}
+                        {% for criteria, passed in top_match.checks.items() %}
+                            <span class="badge-clean {% if passed %}badge-success{% else %}badge-neutral{% endif %}" style="font-size: 0.76rem;">
+                                {% if passed %}
+                                <svg class="icon-svg" style="width: 12px; height: 12px;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                {% endif %}
+                                <span>{{ criteria }} verified</span>
+                            </span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Match Score Circle Display -->
+            <div style="text-align: center; background: var(--accent-light); border: 1px solid #bfdbfe; border-radius: var(--radius-md); padding: 1rem 1.4rem; min-width: 130px;">
+                <div style="font-size: 2.1rem; font-weight: 800; color: var(--primary-accent); line-height: 1;">
+                    {{ top_match.score }}%
+                </div>
+                <div style="font-size: 0.72rem; font-weight: 700; color: #1e40af; text-transform: uppercase; margin-top: 0.4rem; letter-spacing: 0.5px;" data-i18n="stat_fit">
+                    Statutory Fit
+                </div>
+            </div>
+        </div>
+
+        <!-- Clean Documentation Notice Strip -->
+        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.85rem 1.1rem; margin-top: 1.2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.8rem;">
+            <div style="display: flex; align-items: center; gap: 0.55rem; font-size: 0.86rem; color: #334155;">
+                <svg class="icon-svg" style="width: 17px; height: 17px; color: var(--primary-accent);" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                <span><strong data-i18n="doc_req">Documentation Requirement:</strong> 4 statutory certificates needed for loan sanction.</span>
+            </div>
+            <a href="/scheme/{{ top_match.id }}#documents-section" style="font-size: 0.82rem; font-weight: 700; color: var(--primary-accent); text-decoration: none;" data-i18n="verify_papers">
+                Verify Papers in Details &rarr;
+            </a>
+        </div>
+
+        <!-- Action Strip -->
+        <div style="display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.5rem; align-items: center; border-top: 1px solid var(--border); padding-top: 1.2rem;">
+            <a href="/scheme/{{ top_match.id }}" class="btn-primary" style="background: var(--primary);">
+                <span data-i18n="view_full">View Full Details</span>
+                <svg class="icon-svg" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+            <button type="button" class="btn-outline" id="btn-top-docket">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                <span data-i18n="dl_docket">Download Verification Docket</span>
+            </button>
+            <a href="/calculator?scheme_id={{ top_match.id }}" class="btn-outline">
+                <svg class="icon-svg" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="14.01"></line><line x1="12" y1="14" x2="12" y2="14.01"></line><line x1="8" y1="14" x2="8" y2="14.01"></line><line x1="16" y1="18" x2="16" y2="18.01"></line><line x1="12" y1="18" x2="12" y2="18.01"></line><line x1="8" y1="18" x2="8" y2="18.01"></line></svg>
+                <span data-i18n="emi_math">EMI Math</span>
+            </a>
+            <a href="/locator" class="btn-outline">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <span data-i18n="find_bank">Find Bank Desk</span>
+            </a>
+            <button type="button" class="btn-outline-sm btn-why-match" data-scheme-id="{{ top_match.id }}" data-i18n="why_match" style="margin-left: auto;">
+                Why This Match?
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== OTHER ELIGIBLE SCHEMES ==================== -->
+    {% if other_matches %}
+    <div style="margin-bottom: 1rem;">
+        <h2 style="font-size: 1.15rem; color: #0f172a; font-weight: 700;" data-i18n="other_schemes">Other Eligible MoSJE Schemes</h2>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.15rem;" data-i18n="other_sub">Secondary options matching your profile criteria.</p>
+    </div>
+
+    <div class="schemes-grid" id="other-schemes-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 1.25rem;">
+        {% for s in other_matches %}
+        <div class="card scheme-grid-card scheme-item-card" data-score="{{ s.score }}" data-name="{{ s.name }}" data-benefit="{{ s.benefits }} {{ s.benefit_type }}" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+                    <span class="badge-clean badge-neutral" style="font-weight: 700;">{{ s.score }}% <span data-i18n="comp_tag">COMPATIBILITY</span></span>
+                    <span style="font-weight: 700; color: var(--success); font-size: 0.88rem;">{{ s.interest_rate }}% p.a.</span>
+                </div>
+                
+                <h3 style="font-size: 1.05rem; margin-bottom: 0.2rem; color: #0f172a;">{{ s.name }}</h3>
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.6rem;">{{ s.ministry }}</div>
+                <p style="font-size: 0.86rem; color: #475569; line-height: 1.5; margin-bottom: 0.8rem;">{{ s.benefits }}</p>
+
+                <div style="font-size: 0.78rem; color: #64748b; background: #f8fafc; padding: 0.4rem 0.6rem; border-radius: var(--radius-sm); margin-bottom: 0.8rem;">
+                    Moratorium: {{ s.moratorium_months }}M &bull; Loan: Up to {{ s.govt_share_pct }}%
+                </div>
+            </div>
+
+            <div style="border-top: 1px solid var(--border); padding-top: 0.8rem; display: flex; justify-content: space-between; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+                <button type="button" class="btn-outline-sm btn-why-match" data-scheme-id="{{ s.id }}" data-i18n="why_match">Why Match?</button>
+                <div style="display: flex; gap: 0.4rem;">
+                    <a href="/compare?id1={{ top_match.id }}&id2={{ s.id }}" class="btn-outline-sm" style="color: var(--primary-accent); font-weight: 600;" data-i18n="compare">
+                        Compare
+                    </a>
+                    <a href="/calculator?scheme_id={{ s.id }}" class="btn-outline-sm">EMI</a>
+                    <a href="/scheme/{{ s.id }}" class="btn-outline-sm" data-i18n="details">Details &rarr;</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- Zero State Fallback -->
+    <div class="card" style="text-align: center; padding: 3rem 1.5rem; margin-top: 1.5rem;">
+        <h3 style="font-size: 1.25rem; color: #0f172a; margin-bottom: 0.5rem;" data-i18n="no_match">No Direct Scheme Matches Found</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); max-width: 520px; margin: 0 auto 1.5rem; line-height: 1.5;" data-i18n="no_match_desc">
+            Concessional credit guidelines require family income &le; &#8377;5,00,000, target group quotas, and allowable project budgets. Please update your profile parameters to rescan.
+        </p>
+        <a href="/profile" class="btn-primary" data-i18n="update_prof">Update Profile Parameters</a>
+    </div>
+    {% endif %}
+
+    <!-- Why Match Modal -->
+    <div id="why-modal-backdrop" class="modal-backdrop" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5); z-index: 2000; align-items: center; justify-content: center; padding: 1rem;">
+        <div class="card modal-window" style="max-width: 520px; width: 100%; max-height: 85vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem; margin-bottom: 1rem;">
+                <div>
+                    <h3 id="modal-scheme-title" style="font-size: 1.15rem; color: #0f172a;" data-i18n="modal_title">Scheme Eligibility</h3>
+                    <span id="modal-score-val" class="badge-clean badge-success" style="margin-top: 0.2rem;"></span>
+                </div>
+                <button type="button" class="close-btn" id="modal-close-button" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #64748b;">&#10005;</button>
+            </div>
+
+            <p style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;" data-i18n="stat_breakdown">
+                Statutory Verification Breakdown
+            </p>
+            <div id="modal-checks-grid" style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.2rem;"></div>
+
+            <p style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.4rem;" data-i18n="elig_norm">
+                Eligibility Reasoning &amp; Policy Norms
+            </p>
+            <p id="modal-explanation" style="font-size: 0.88rem; color: #334155; line-height: 1.5; background: #f8fafc; padding: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border);"></p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// Standalone Self-Contained i18n Dictionary for Recommendations Page
+const recPageDict = {
+    en: {
+        rec_title: "Statutory Scheme Recommendations",
+        rec_subtitle: "Rule-verified matches under Ministry of Social Justice & Empowerment (MoSJE / NSFDC / NSKFDC) credit guidelines.",
+        compare_top: "Compare Top Matches",
+        search_ph: "Search by scheme name or keyword (e.g., MSY, Micro, Green)...",
+        type_lbl: "Type:",
+        opt_all: "All Categories",
+        opt_micro: "Micro Credit (≤ ₹1.4L)",
+        opt_term: "Term Loan / Enterprise",
+        sort_lbl: "Sort:",
+        sort_fit: "Highest Compatibility",
+        sort_rate: "Lowest Interest Rate",
+        sort_name: "Scheme Name (A-Z)",
+        primary_rec: "Primary Recommendation",
+        conc_rate: "Concessional Rate:",
+        govt_supp: "Govt Support:",
+        own_margin: "Own Margin:",
+        grace_win: "Grace Window:",
+        stat_fit: "Statutory Fit",
+        doc_req: "Documentation Requirement: 4 statutory certificates needed for loan sanction.",
+        verify_papers: "Verify Papers in Details →",
+        view_full: "View Full Details",
+        dl_docket: "Download Verification Docket",
+        emi_math: "EMI Math",
+        find_bank: "Find Bank Desk",
+        why_match: "Why This Match?",
+        other_schemes: "Other Eligible MoSJE Schemes",
+        other_sub: "Secondary options matching your profile criteria.",
+        comp_tag: "COMPATIBILITY",
+        compare: "Compare",
+        details: "Details →",
+        no_match: "No Direct Scheme Matches Found",
+        no_match_desc: "Concessional credit guidelines require family income ≤ ₹5,00,000, target group quotas, and allowable project budgets. Please update your profile parameters to rescan.",
+        update_prof: "Update Profile Parameters",
+        modal_title: "Scheme Eligibility",
+        stat_breakdown: "Statutory Verification Breakdown",
+        elig_norm: "Eligibility Reasoning & Policy Norms"
+    },
+    hi: {
+        rec_title: "सत्यापित सरकारी ऋण योजनाएं",
+        rec_subtitle: "सामाजिक न्याय एवं अधिकारिता मंत्रालय (MoSJE / NSFDC / NSKFDC) के दिशा-निर्देशों के अनुरूप सत्यापित विकल्प।",
+        compare_top: "शीर्ष योजनाओं की तुलना करें",
+        search_ph: "योजना के नाम या कीवर्ड से खोजें (जैसे MSY, सिलाई, ग्रीन)...",
+        type_lbl: "प्रकार:",
+        opt_all: "सभी श्रेणियां",
+        opt_micro: "सूक्ष्म ऋण (≤ ₹1.4 लाख)",
+        opt_term: "अवधि ऋण / उद्यम",
+        sort_lbl: "क्रम:",
+        sort_fit: "सर्वश्रेष्ठ अनुकूलता",
+        sort_rate: "न्यूनतम ब्याज दर",
+        sort_name: "योजना का नाम (A-Z)",
+        primary_rec: "प्राथमिक अनुशंसित योजना",
+        conc_rate: "रियायती ब्याज दर:",
+        govt_supp: "सरकारी सहायता:",
+        own_margin: "स्वयं का मार्जिन:",
+        grace_win: "छूट अवधि:",
+        stat_fit: "सरकारी अनुकूलता",
+        doc_req: "दस्तावेज़ आवश्यकता: ऋण स्वीकृति के लिए 4 वैधानिक प्रमाण पत्र आवश्यक हैं।",
+        verify_papers: "विवरण में कागजात सत्यापित करें →",
+        view_full: "पूर्ण विवरण देखें",
+        dl_docket: "सत्यापन डोजियर डाउनलोड करें",
+        emi_math: "EMI गणना",
+        find_bank: "बैंक डेस्क खोजें",
+        why_match: "यह योजना क्यों?",
+        other_schemes: "अन्य पात्र सरकारी योजनाएं",
+        other_sub: "आपकी पात्रता मानदंडों से मेल खाने वाले अन्य विकल्प।",
+        comp_tag: "अनुकूलता",
+        compare: "तुलना",
+        details: "विवरण →",
+        no_match: "कोई प्रत्यक्ष योजना मेल नहीं मिली",
+        no_match_desc: "रियायती ऋण नियमों के अनुसार परिवार की वार्षिक आय ≤ ₹5,00,000 और निर्धारित बजट होना आवश्यक है। कृपया अपनी प्रोफाइल अपडेट करें।",
+        update_prof: "प्रोफाइल पैरामीटर अपडेट करें",
+        modal_title: "योजना पात्रता विवरण",
+        stat_breakdown: "नियमों के अनुसार सत्यापन विवरण",
+        elig_norm: "पात्रता कारण एवं नीतिगत मानक"
+    }
+};
+
+function applyRecommendationsPageTranslation(lang) {
+    var dict = recPageDict[lang] || recPageDict.en;
+
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n');
+        if (dict[key]) el.innerText = dict[key];
+    });
+
+    document.querySelectorAll('[data-i18n-opt]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n-opt');
+        if (dict[key]) el.innerText = dict[key];
+    });
+
+    document.querySelectorAll('[data-i18n-ph]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n-ph');
+        if (dict[key]) el.setAttribute('placeholder', dict[key]);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    var savedLang = localStorage.getItem('schemesathi_lang') || 'en';
+    applyRecommendationsPageTranslation(savedLang);
+
+    // Watch for global language toggle changes
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'schemesathi_lang') {
+            applyRecommendationsPageTranslation(e.newValue);
+        }
+    });
+});
+
+function liveSearchSchemes() {
+    var q = document.getElementById("scheme-search-input").value.toLowerCase();
+    var cards = document.querySelectorAll(".scheme-item-card");
+    cards.forEach(function(card) {
+        var name = (card.getAttribute("data-name") || "").toLowerCase();
+        var benefit = (card.getAttribute("data-benefit") || "").toLowerCase();
+        if (name.includes(q) || benefit.includes(q)) {
+            card.style.display = "";
+        } else {
+            card.style.display = "none";
+        }
+    });
+}
+
+function applyFilterAndSort() {
+    var fType = document.getElementById("filter-type").value;
+    var cards = document.querySelectorAll(".schemes-grid > div");
+
+    cards.forEach(function(card) {
+        var benefit = (card.getAttribute("data-benefit") || "").toLowerCase();
+        if (fType === "All") {
+            card.style.display = "";
+        } else if (fType === "Micro" && benefit.includes("micro")) {
+            card.style.display = "";
+        } else if (fType === "Term" && !benefit.includes("micro")) {
+            card.style.display = "";
+        } else {
+            card.style.display = "none";
+        }
+    });
+}
+</script>
+{% endblock %}

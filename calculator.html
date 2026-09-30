@@ -1,0 +1,561 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="calculator-container" style="max-width: 1050px; margin: 0 auto; padding: 1rem 0;">
+    
+    <!-- Header -->
+    <div class="results-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h1 class="page-title" data-i18n="calc_title">Concessional Credit &amp; Amortisation Engine</h1>
+            <p class="page-subtitle" data-i18n="calc_subtitle">
+                Accurate reducing-balance EMI calculations with statutory moratorium grace periods and trade-based DPR splits.
+            </p>
+        </div>
+        <a href="/recommendations" class="btn-outline-sm">
+            <svg class="icon-svg" style="width: 13px; height: 13px;" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span data-i18n="back_rec">Back to Recommendations</span>
+        </a>
+    </div>
+
+    <!-- 2-Column Responsive Layout -->
+    <div class="details-grid" style="display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 2rem; align-items: start;">
+        
+        <!-- Left Column: Controls & Dynamic DPR Breakdown -->
+        <div class="card" style="padding: 1.8rem;">
+            <h2 style="font-size: 1.15rem; color: #0f172a; margin-bottom: 1.2rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem;" data-i18n="calc_sec1">
+                1. Loan Parameters &amp; Trade DPR
+            </h2>
+
+            <!-- Scheme Selector -->
+            <div style="margin-bottom: 1.2rem;">
+                <label style="display: block; font-size: 0.84rem; font-weight: 700; color: #334155; margin-bottom: 0.4rem;" data-i18n="target_scheme">
+                    Target MoSJE Scheme:
+                </label>
+                <select id="calc-scheme-picker" style="width: 100%; padding: 0.65rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.9rem; background: #fff;">
+                    {% for s in schemes %}
+                    <option value="{{ s.id }}" 
+                            data-rate="{{ s.interest_rate }}" 
+                            data-maxcost="{{ s.max_project_cost }}" 
+                            data-moratorium="{{ s.moratorium_months }}" 
+                            data-govtshare="{{ s.govt_share_pct }}"
+                            {% if scheme and s.id == scheme.id %}selected{% endif %}>
+                        {{ s.name }} ({{ s.interest_rate }}% p.a.)
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Dynamic Project Cost Slider & Direct Number Input -->
+            <div style="margin-bottom: 1.2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                    <label style="font-size: 0.84rem; font-weight: 700; color: #334155;" data-i18n="total_budget">Total Project Budget:</label>
+                    <div style="display: flex; align-items: center; gap: 0.3rem;">
+                        <span style="font-size: 0.95rem; font-weight: 700; color: var(--primary-accent);">&#8377;</span>
+                        <input type="number" id="calc-cost-number" 
+                               value="{{ user.get('project_cost', 85000) | int if user else 85000 }}" 
+                               min="10000" max="5000000" step="1000"
+                               style="width: 130px; padding: 0.35rem 0.5rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 1rem; font-weight: 800; color: var(--primary-accent); text-align: right;">
+                    </div>
+                </div>
+                <input type="range" id="calc-cost-slider" min="15000" max="500000" step="5000" 
+                       value="{{ user.get('project_cost', 85000) | int if user else 85000 }}" 
+                       style="width: 100%; cursor: pointer;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">
+                    <span><span data-i18n="min_lbl">Min:</span> &#8377;15,000</span>
+                    <span id="slider-max-label"><span data-i18n="max_lbl">Max:</span> &#8377;5,00,000</span>
+                </div>
+            </div>
+
+            <!-- Trade Profile Selector for DPR Split -->
+            <div style="margin-bottom: 1.2rem;">
+                <label style="display: block; font-size: 0.84rem; font-weight: 700; color: #334155; margin-bottom: 0.4rem;" data-i18n="trade_prof">
+                    Beneficiary Trade Profile (For Bank DPR):
+                </label>
+                {% set user_purpose = user.get('purpose', '').lower() if user else '' %}
+                <select id="trade-profile-picker" style="width: 100%; padding: 0.6rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.88rem; background: #fff; font-weight: 600; color: #0f172a;">
+                    <option value="tailoring" {% if 'tailor' in user_purpose or 'silai' in user_purpose or 'boutique' in user_purpose %}selected{% endif %} data-i18n-opt="trade_opt1">
+                        Tailoring &amp; Silai Boutique (70% Machines / 30% Fabric)
+                    </option>
+                    <option value="transport" {% if 'rickshaw' in user_purpose or 'auto' in user_purpose or 'transport' in user_purpose or 'vehicle' in user_purpose %}selected{% endif %} data-i18n-opt="trade_opt2">
+                        E-Rickshaw &amp; Passenger Transport (80% Vehicle / 20% Initial Working Fund)
+                    </option>
+                    <option value="kirana" {% if 'kirana' in user_purpose or 'grocery' in user_purpose or 'retail' in user_purpose or 'shop' in user_purpose %}selected{% endif %} data-i18n-opt="trade_opt3">
+                        Kirana &amp; Grocery Retail Store (40% Racks &amp; Scales / 60% Stock)
+                    </option>
+                    <option value="food" {% if 'food' in user_purpose or 'tea' in user_purpose or 'stall' in user_purpose or 'dhaba' in user_purpose %}selected{% endif %} data-i18n-opt="trade_opt4">
+                        Tea Stall &amp; Food Vending Unit (65% Equipment / 35% Daily Raw Material)
+                    </option>
+                    <option value="general" {% if not user_purpose %}selected{% endif %} data-i18n-opt="trade_opt5">
+                        Other Micro Enterprise (Standard 70:30 Split)
+                    </option>
+                </select>
+            </div>
+
+            <!-- DPR Detailed Project Report Split -->
+            <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1.1rem; margin-bottom: 1.4rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+                    <strong style="font-size: 0.84rem; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px;" data-i18n="dpr_split_title">Statutory Trade DPR Split</strong>
+                    <span id="dpr-ratio-badge" class="badge-clean badge-neutral" style="font-size: 0.74rem; font-weight: 700;">70 : 30 Ratio</span>
+                </div>
+
+                <!-- Visual 2-Color Split Bar -->
+                <div style="height: 8px; background: #e2e8f0; border-radius: 999px; overflow: hidden; display: flex; margin-bottom: 0.9rem;">
+                    <div id="dpr-bar-machinery" style="width: 70%; background: #0284c7; height: 100%; transition: width 0.3s ease;"></div>
+                    <div id="dpr-bar-working" style="width: 30%; background: #10b981; height: 100%; transition: width 0.3s ease;"></div>
+                </div>
+
+                <!-- Split Cards -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; font-size: 0.85rem;">
+                    <div style="background: #fff; padding: 0.75rem 0.85rem; border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                        <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.25rem;">
+                            <span style="display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #0284c7;"></span>
+                            <span id="dpr-machinery-title" style="color: var(--text-muted); font-size: 0.76rem; font-weight: 700;">Plant &amp; Machinery (70%)</span>
+                        </div>
+                        <strong id="dpr-machinery" style="color: #0284c7; font-size: 1.15rem; display: block;">&#8377;59,500</strong>
+                        <small id="dpr-mach-items" style="color: #64748b; font-size: 0.74rem; display: block; margin-top: 0.3rem; line-height: 1.35; min-height: 32px;">
+                            Industrial sewing machine, motor, cutting table, iron
+                        </small>
+                    </div>
+
+                    <div style="background: #fff; padding: 0.75rem 0.85rem; border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                        <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.25rem;">
+                            <span style="display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #10b981;"></span>
+                            <span id="dpr-working-title" style="color: var(--text-muted); font-size: 0.76rem; font-weight: 700;">Working Capital (30%)</span>
+                        </div>
+                        <strong id="dpr-working-cap" style="color: #10b981; font-size: 1.15rem; display: block;">&#8377;25,500</strong>
+                        <small id="dpr-work-items" style="color: #64748b; font-size: 0.74rem; display: block; margin-top: 0.3rem; line-height: 1.35; min-height: 32px;">
+                            Fabric rolls, lining material, threads, zippers, needles
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Moratorium Selection -->
+            <div style="margin-bottom: 1.4rem;">
+                <label style="display: block; font-size: 0.84rem; font-weight: 700; color: #334155; margin-bottom: 0.4rem;" data-i18n="mor_window">
+                    Moratorium Grace Window (Business Setup Phase):
+                </label>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button type="button" class="btn-outline-sm mor-btn" data-m="0" style="flex: 1; padding: 0.5rem 0.2rem;"><span data-i18n="m_zero">0 Months</span></button>
+                    <button type="button" class="btn-outline-sm mor-btn" data-m="3" style="flex: 1; padding: 0.5rem 0.2rem; background: var(--primary-accent); color: white; border-color: var(--primary-accent);"><span data-i18n="m_three">3 Months</span></button>
+                    <button type="button" class="btn-outline-sm mor-btn" data-m="6" style="flex: 1; padding: 0.5rem 0.2rem;"><span data-i18n="m_six">6 Months</span></button>
+                </div>
+                <input type="hidden" id="calc-moratorium" value="3">
+            </div>
+
+            <!-- Tenure & Rate -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <label style="display: block; font-size: 0.84rem; font-weight: 700; color: #334155; margin-bottom: 0.4rem;" data-i18n="tenure_lbl">Repayment Tenure:</label>
+                    <select id="calc-tenor" style="width: 100%; padding: 0.6rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.88rem; background: #fff;">
+                        <option value="24" data-i18n-opt="tenor_2y">2 Years (24 Months)</option>
+                        <option value="36" selected data-i18n-opt="tenor_3y">3 Years (36 Months)</option>
+                        <option value="60" data-i18n-opt="tenor_5y">5 Years (60 Months)</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.84rem; font-weight: 700; color: #334155; margin-bottom: 0.4rem;" data-i18n="rate_lbl">Concessional Rate:</label>
+                    <input type="text" id="calc-rate" value="{{ scheme.interest_rate if scheme else 4.0 }}" readonly style="width: 100%; padding: 0.6rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.88rem; background: #f8fafc; font-weight: 700; color: var(--success);">
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Financial Disbursal Breakdown -->
+        <div>
+            
+            <!-- Output Summary Card -->
+            <div class="card" style="padding: 1.8rem; background: #ffffff; border-top: 4px solid var(--success); margin-bottom: 1.5rem;">
+                <span class="badge-clean badge-success" style="margin-bottom: 0.6rem;" data-i18n="emi_card_title">Monthly Repayment Assessment</span>
+                
+                <div style="margin: 0.6rem 0 1.2rem;">
+                    <div style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;" data-i18n="est_emi_lbl">Estimated Monthly EMI</div>
+                    <div id="res-emi" style="font-size: 2.2rem; font-weight: 800; color: #0f172a; line-height: 1.2; margin-top: 0.2rem;">
+                        &#8377;2,218 <span style="font-size: 1rem; font-weight: 600;" data-i18n="per_month">/ month</span>
+                    </div>
+                    <small style="color: var(--text-muted); font-size: 0.8rem;" data-i18n="payable_grace">Payable after completion of grace period</small>
+                </div>
+
+                <!-- Schedule Steps -->
+                <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.9rem; margin-bottom: 1.4rem;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.84rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border);">
+                        <span style="color: var(--text-muted);"><span data-i18n="grace_win_step">Grace Window (1 to</span> <span id="res-m-months">3</span>):</span>
+                        <strong style="color: var(--primary-accent);" data-i18n="zero_emi_setup">&#8377;0 (Zero EMI during setup)</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.84rem; padding-top: 0.4rem;">
+                        <span style="color: var(--text-muted);" data-i18n="post_grace_amort">Post-Grace Amortisation:</span>
+                        <strong style="color: #0f172a;"><span id="res-t-months">36</span> <span data-i18n="equal_monthly_pay">Equal Monthly Payments</span></strong>
+                    </div>
+                </div>
+
+                <!-- Equity vs Loan Split Bar -->
+                <div style="margin-bottom: 1.2rem;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.82rem; font-weight: 700; margin-bottom: 0.4rem;">
+                        <span style="color: #1e3a8a;"><span data-i18n="govt_loan_lbl">Govt Concessional Loan:</span> <span id="res-govt-loan">&#8377;76,500</span></span>
+                        <span style="color: #475569;"><span data-i18n="own_contrib_lbl">Own Contribution:</span> <span id="res-promoter-share">&#8377;8,500</span></span>
+                    </div>
+                    <div style="height: 8px; background: #e2e8f0; border-radius: 999px; overflow: hidden; display: flex;">
+                        <div id="bar-govt" style="width: 90%; background: #1e3a8a; height: 100%;"></div>
+                        <div id="bar-own" style="width: 10%; background: #94a3b8; height: 100%;"></div>
+                    </div>
+                </div>
+
+                <!-- Direct Savings Banner -->
+                <div style="background: #f0fdf4; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.85rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <svg class="icon-svg" style="color: var(--success); flex-shrink: 0;" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                    <div style="font-size: 0.82rem; color: #166534; line-height: 1.4;">
+                        <strong data-i18n="direct_savings">Direct Family Savings:</strong> <span data-i18n="savings_desc">You save approx</span> <strong id="res-savings">&#8377;12,400</strong> <span data-i18n="savings_compare">compared to private unsecured loans (14% p.a.).</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Strip -->
+            <div style="display: flex; gap: 0.8rem;">
+                <a href="/locator" class="btn-primary" style="flex: 1;">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    <span data-i18n="locate_bank_desk">Locate Bank Desk &rarr;</span>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+const calculatorPageDict = {
+    en: {
+        calc_title: "Concessional Credit & Amortisation Engine",
+        calc_subtitle: "Accurate reducing-balance EMI calculations with statutory moratorium grace periods and trade-based DPR splits.",
+        back_rec: "Back to Recommendations",
+        calc_sec1: "1. Loan Parameters & Trade DPR",
+        target_scheme: "Target MoSJE Scheme:",
+        total_budget: "Total Project Budget:",
+        min_lbl: "Min:",
+        max_lbl: "Max:",
+        trade_prof: "Beneficiary Trade Profile (For Bank DPR):",
+        trade_opt1: "Tailoring & Silai Boutique (70% Machines / 30% Fabric)",
+        trade_opt2: "E-Rickshaw & Passenger Transport (80% Vehicle / 20% Initial Working Fund)",
+        trade_opt3: "Kirana & Grocery Retail Store (40% Racks & Scales / 60% Stock)",
+        trade_opt4: "Tea Stall & Food Vending Unit (65% Equipment / 35% Daily Raw Material)",
+        trade_opt5: "Other Micro Enterprise (Standard 70:30 Split)",
+        dpr_split_title: "Statutory Trade DPR Split",
+        mor_window: "Moratorium Grace Window (Business Setup Phase):",
+        m_zero: "0 Months",
+        m_three: "3 Months",
+        m_six: "6 Months",
+        tenure_lbl: "Repayment Tenure:",
+        tenor_2y: "2 Years (24 Months)",
+        tenor_3y: "3 Years (36 Months)",
+        tenor_5y: "5 Years (60 Months)",
+        rate_lbl: "Concessional Rate:",
+        emi_card_title: "Monthly Repayment Assessment",
+        est_emi_lbl: "Estimated Monthly EMI",
+        per_month: "/ month",
+        payable_grace: "Payable after completion of grace period",
+        grace_win_step: "Grace Window (1 to",
+        zero_emi_setup: "₹0 (Zero EMI during setup)",
+        post_grace_amort: "Post-Grace Amortisation:",
+        equal_monthly_pay: "Equal Monthly Payments",
+        govt_loan_lbl: "Govt Concessional Loan:",
+        own_contrib_lbl: "Own Contribution:",
+        direct_savings: "Direct Family Savings:",
+        savings_desc: "You save approx",
+        savings_compare: "compared to private unsecured loans (14% p.a.).",
+        locate_bank_desk: "Locate Bank Desk →"
+    },
+    hi: {
+        calc_title: "रियायती ऋण और परिशोधन इंजन",
+        calc_subtitle: "वैधानिक मोराटोरियम छूट अवधि और व्यापार-आधारित DPR विभाजन के साथ सटीक घटते-शेष EMI गणना।",
+        back_rec: "← सिफारिशों पर वापस जाएं",
+        calc_sec1: "1. ऋण पैरामीटर एवं व्यापार DPR",
+        target_scheme: "लक्षित सरकारी योजना:",
+        total_budget: "कुल परियोजना बजट:",
+        min_lbl: "न्यूनतम:",
+        max_lbl: "अधिकतम:",
+        trade_prof: "व्यवसाय प्रोफाइल (बैंक DPR हेतु):",
+        trade_opt1: "सिलाई बुटीक इकाई (70% मशीनें / 30% कपड़ा)",
+        trade_opt2: "ई-रिक्शा एवं यात्री परिवहन (80% वाहन / 20% शुरुआती कार्यशील निधि)",
+        trade_opt3: "किराना एवं खुदरा स्टोर (40% रैक एवं तराजू / 60% स्टॉक)",
+        trade_opt4: "चाय की दुकान एवं खाद्य वेंडिंग इकाई (65% उपकरण / 35% दैनिक कच्चा माल)",
+        trade_opt5: "अन्य सूक्ष्म उद्यम (मानक 70:30 अनुपात)",
+        dpr_split_title: "वैधानिक व्यापार DPR विभाजन",
+        mor_window: "व्यवसाय स्थापना छूट (मोराटोरियम):",
+        m_zero: "0 महीने",
+        m_three: "3 महीने",
+        m_six: "6 महीने",
+        tenure_lbl: "ऋण वापसी की अवधि:",
+        tenor_2y: "2 वर्ष (24 महीने)",
+        tenor_3y: "3 वर्ष (36 महीने)",
+        tenor_5y: "5 वर्ष (60 महीने)",
+        rate_lbl: "रियायती वार्षिक ब्याज दर:",
+        emi_card_title: "मासिक किस्त (EMI) आकलन",
+        est_emi_lbl: "अनुमानित मासिक किस्त (EMI)",
+        per_month: "/ माह",
+        payable_grace: "छूट अवधि पूरी होने के बाद देय",
+        grace_win_step: "छूट अवधि (1 से",
+        zero_emi_setup: "₹0 (स्थापना अवधि में शून्य किस्त)",
+        post_grace_amort: "छूट के बाद EMI भुगतान:",
+        equal_monthly_pay: "समान मासिक किस्तें",
+        govt_loan_lbl: "सरकारी रियायती ऋण:",
+        own_contrib_lbl: "स्वयं की लागत:",
+        direct_savings: "प्रत्यक्ष परिवार बचत:",
+        savings_desc: "आप लगभग बचत करते हैं",
+        savings_compare: "निजी असुरक्षित ऋणों (14% वार्षिक) की तुलना में।",
+        locate_bank_desk: "बैंक केंद्र खोजें →"
+    }
+};
+
+function applyCalculatorPageTranslation(lang) {
+    var dict = calculatorPageDict[lang] || calculatorPageDict.en;
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n');
+        if (dict[key]) el.innerText = dict[key];
+    });
+
+    document.querySelectorAll('[data-i18n-opt]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n-opt');
+        if (dict[key]) el.innerText = dict[key];
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    var savedLang = localStorage.getItem('schemesathi_lang') || 'en';
+    applyCalculatorPageTranslation(savedLang);
+
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'schemesathi_lang') {
+            applyCalculatorPageTranslation(e.newValue);
+        }
+    });
+});
+
+// Comprehensive Trade-Specific Configuration
+var tradeDPRConfig = {
+    tailoring: {
+        ratio: 70,
+        machName: "Plant & Machinery (70%)",
+        workName: "Working Capital (30%)",
+        machItems: "Industrial sewing machine, motor, cutting table, iron",
+        workItems: "Fabric rolls, lining material, threads, zippers, needles"
+    },
+    transport: {
+        ratio: 80,
+        machName: "Vehicle & Battery Asset (80%)",
+        workName: "Initial Working Fund (20%)",
+        machItems: "Electric Rickshaw chassis, lithium battery pack, fast charger",
+        workItems: "RTO commercial permit, insurance cover, spare tyre buffer"
+    },
+    kirana: {
+        ratio: 40,
+        machName: "Shop Display & Assets (40%)",
+        workName: "Inventory Stock (60%)",
+        machItems: "Heavy steel display racks, digital weighing scale, billing counter",
+        workItems: "Wholesale grains, pulses, cooking oils, packaged FMCG goods"
+    },
+    food: {
+        ratio: 65,
+        machName: "Kitchen Equipment (65%)",
+        workName: "Daily Ingredients Fund (35%)",
+        machItems: "Commercial gas stove, gas cylinder, stainless steel vessels, mobile cart",
+        workItems: "Daily milk supply, tea leaves, spices, flour, cooking oil buffer"
+    },
+    general: {
+        ratio: 70,
+        machName: "Capital Equipment (70%)",
+        workName: "Working Capital (30%)",
+        machItems: "Primary trade tools, machinery, durable business setup assets",
+        workItems: "Raw materials, initial processing consumables, trading inventory"
+    }
+};
+
+function recalculateAll() {
+    var numBox = document.getElementById("calc-cost-number");
+    var slider = document.getElementById("calc-cost-slider");
+    var tradePicker = document.getElementById("trade-profile-picker");
+    var schemePicker = document.getElementById("calc-scheme-picker");
+    var rateInput = document.getElementById("calc-rate");
+    var tenorElem = document.getElementById("calc-tenor");
+    var morInput = document.getElementById("calc-moratorium");
+
+    var totalCost = parseFloat(numBox.value);
+    if (isNaN(totalCost) || totalCost <= 0) {
+        totalCost = parseFloat(slider.value) || 85000;
+    }
+
+    var tradeKey = tradePicker ? tradePicker.value : "tailoring";
+    var cfg = tradeDPRConfig[tradeKey] || tradeDPRConfig.general;
+
+    var machPct = cfg.ratio;
+    var workPct = 100 - machPct;
+
+    var machAmount = Math.round(totalCost * (machPct / 100));
+    var workAmount = Math.round(totalCost * (workPct / 100));
+
+    document.getElementById("dpr-ratio-badge").innerText = machPct + " : " + workPct + " Ratio";
+    document.getElementById("dpr-bar-machinery").style.width = machPct + "%";
+    document.getElementById("dpr-bar-working").style.width = workPct + "%";
+
+    document.getElementById("dpr-machinery-title").innerText = cfg.machName;
+    document.getElementById("dpr-working-title").innerText = cfg.workName;
+
+    document.getElementById("dpr-machinery").innerText = "₹" + machAmount.toLocaleString("en-IN");
+    document.getElementById("dpr-working-cap").innerText = "₹" + workAmount.toLocaleString("en-IN");
+
+    document.getElementById("dpr-mach-items").innerText = cfg.machItems;
+    document.getElementById("dpr-work-items").innerText = cfg.workItems;
+
+    var govtSharePct = 90;
+    if (schemePicker && schemePicker.selectedIndex >= 0) {
+        var opt = schemePicker.options[schemePicker.selectedIndex];
+        govtSharePct = parseFloat(opt.getAttribute("data-govtshare")) || 90;
+    }
+
+    var govtLoan = totalCost * (govtSharePct / 100);
+    var promoterEquity = totalCost * ((100 - govtSharePct) / 100);
+
+    document.getElementById("res-govt-loan").innerText = "₹" + Math.round(govtLoan).toLocaleString("en-IN");
+    document.getElementById("res-promoter-share").innerText = "₹" + Math.round(promoterEquity).toLocaleString("en-IN");
+
+    document.getElementById("bar-govt").style.width = govtSharePct + "%";
+    document.getElementById("bar-own").style.width = (100 - govtSharePct) + "%";
+
+    var annualRate = parseFloat(rateInput ? rateInput.value : 4.0) || 4.0;
+    var monthlyRate = (annualRate / 100) / 12;
+    var tenorMonths = parseInt(tenorElem ? tenorElem.value : 36, 10) || 36;
+    var moratoriumMonths = parseInt(morInput ? morInput.value : 3, 10) || 3;
+
+    document.getElementById("res-m-months").innerText = moratoriumMonths;
+    document.getElementById("res-t-months").innerText = tenorMonths;
+
+    var emi = 0;
+    if (monthlyRate > 0) {
+        var compoundFactor = Math.pow(1 + monthlyRate, tenorMonths);
+        emi = (govtLoan * monthlyRate * compoundFactor) / (compoundFactor - 1);
+    } else {
+        emi = govtLoan / tenorMonths;
+    }
+
+    var currentLang = localStorage.getItem('schemesathi_lang') || 'en';
+    var perMonthText = (currentLang === 'hi') ? " / माह" : " / month";
+    document.getElementById("res-emi").innerHTML = "₹" + Math.round(emi).toLocaleString("en-IN") + ' <span style="font-size: 1rem; font-weight: 600;">' + perMonthText + '</span>';
+
+    var commRate = (14.0 / 100) / 12;
+    var commFactor = Math.pow(1 + commRate, tenorMonths);
+    var commEmi = (govtLoan * commRate * commFactor) / (commFactor - 1);
+
+    var totalConcessionalInterest = (emi * tenorMonths) - govtLoan;
+    var totalCommercialInterest = (commEmi * tenorMonths) - govtLoan;
+    var interestSavings = Math.max(0, totalCommercialInterest - totalConcessionalInterest);
+
+    document.getElementById("res-savings").innerText = "₹" + Math.round(interestSavings).toLocaleString("en-IN");
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    var slider = document.getElementById("calc-cost-slider");
+    var numBox = document.getElementById("calc-cost-number");
+    var tradePicker = document.getElementById("trade-profile-picker");
+    var schemePicker = document.getElementById("calc-scheme-picker");
+    var tenorElem = document.getElementById("calc-tenor");
+
+    if (slider) {
+        slider.addEventListener("input", function() {
+            numBox.value = this.value;
+            recalculateAll();
+        });
+        slider.addEventListener("change", function() {
+            numBox.value = this.value;
+            recalculateAll();
+        });
+    }
+
+    if (numBox) {
+        numBox.addEventListener("input", function() {
+            var val = parseFloat(this.value);
+            if (!isNaN(val)) {
+                slider.value = val;
+                recalculateAll();
+            }
+        });
+        numBox.addEventListener("keyup", function() {
+            var val = parseFloat(this.value);
+            if (!isNaN(val)) {
+                slider.value = val;
+                recalculateAll();
+            }
+        });
+    }
+
+    if (tradePicker) {
+        tradePicker.addEventListener("change", recalculateAll);
+    }
+
+    if (tenorElem) {
+        tenorElem.addEventListener("change", recalculateAll);
+    }
+
+    if (schemePicker) {
+        schemePicker.addEventListener("change", function() {
+            var opt = this.options[this.selectedIndex];
+            var rate = opt.getAttribute("data-rate");
+            var maxCost = opt.getAttribute("data-maxcost");
+            var moratorium = opt.getAttribute("data-moratorium");
+
+            var rateInput = document.getElementById("calc-rate");
+            var maxLabel = document.getElementById("slider-max-label");
+
+            if (rateInput && rate) rateInput.value = rate;
+            if (maxCost) {
+                slider.max = maxCost;
+                numBox.max = maxCost;
+                if (maxLabel) {
+                    var currentLang = localStorage.getItem('schemesathi_lang') || 'en';
+                    var maxPrefix = (currentLang === 'hi') ? "अधिकतम:" : "Max:";
+                    maxLabel.innerText = maxPrefix + " ₹" + Math.round(parseFloat(maxCost)).toLocaleString("en-IN");
+                }
+                if (parseFloat(slider.value) > parseFloat(maxCost)) {
+                    slider.value = maxCost;
+                    numBox.value = maxCost;
+                }
+            }
+            if (moratorium) {
+                setMoratorium(parseInt(moratorium, 10));
+            }
+            recalculateAll();
+        });
+    }
+
+    var morButtons = document.querySelectorAll(".mor-btn");
+    morButtons.forEach(function(btn) {
+        btn.addEventListener("click", function() {
+            var m = parseInt(btn.getAttribute("data-m"), 10);
+            setMoratorium(m);
+        });
+    });
+
+    recalculateAll();
+});
+
+function setMoratorium(months) {
+    var morInput = document.getElementById("calc-moratorium");
+    if (morInput) morInput.value = months;
+
+    var buttons = document.querySelectorAll(".mor-btn");
+    buttons.forEach(function(btn) {
+        var btnM = parseInt(btn.getAttribute("data-m"), 10);
+        if (btnM === months) {
+            btn.style.background = "var(--primary-accent)";
+            btn.style.color = "#ffffff";
+            btn.style.borderColor = "var(--primary-accent)";
+        } else {
+            btn.style.background = "#ffffff";
+            btn.style.color = "var(--text-main)";
+            btn.style.borderColor = "var(--border)";
+        }
+    });
+
+    recalculateAll();
+}
+</script>
+{% endblock %}

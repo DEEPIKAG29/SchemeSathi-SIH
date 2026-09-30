@@ -1,0 +1,839 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="form-wrapper" style="max-width: 640px; margin: 0 auto; padding: 1rem 0;">
+    
+    <!-- Progress Indicator Bar -->
+    <div class="progress-bar-container" style="max-width: 460px; margin: 0 auto 2rem; display: flex; justify-content: space-between; position: relative;">
+        <div style="position: absolute; top: 18px; left: 10%; right: 10%; height: 2px; background: var(--border); z-index: 1;"></div>
+        
+        <div style="text-align: center; flex: 1; position: relative; z-index: 2;">
+            <div class="step-indicator active" id="indicator-1" style="width: 36px; height: 36px; border-radius: 50%; background: var(--primary-accent); color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.4rem; font-weight: 700; font-size: 0.9rem;">1</div>
+            <small style="color: var(--text-main); font-weight: 600; font-size: 0.78rem;" data-i18n="step_nav1">About You</small>
+        </div>
+        <div style="text-align: center; flex: 1; position: relative; z-index: 2;">
+            <div class="step-indicator" id="indicator-2" style="width: 36px; height: 36px; border-radius: 50%; background: #e2e8f0; color: #64748b; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.4rem; font-weight: 700; font-size: 0.9rem;">2</div>
+            <small style="color: var(--text-muted); font-size: 0.78rem;" data-i18n="step_nav2">Loan Need</small>
+        </div>
+        <div style="text-align: center; flex: 1; position: relative; z-index: 2;">
+            <div class="step-indicator" id="indicator-3" style="width: 36px; height: 36px; border-radius: 50%; background: #e2e8f0; color: #64748b; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.4rem; font-weight: 700; font-size: 0.9rem;">3</div>
+            <small style="color: var(--text-muted); font-size: 0.78rem;" data-i18n="step_nav3">Income &amp; Place</small>
+        </div>
+    </div>
+
+    <!-- Main Stepper Form -->
+    <form id="scheme-profile-form" method="POST" action="/profile">
+
+        <!-- STEP 1: Basic Personal Info -->
+        <div class="card form-step-card" id="step-1" style="padding: 2rem;">
+            <span class="badge-clean badge-neutral" data-i18n="step_tag1">Step 1 of 3</span>
+            <h2 style="margin-top: 0.5rem; font-size: 1.35rem; color: #0f172a;" data-i18n="prof_title">Tell us about yourself</h2>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.2rem;" data-i18n="prof_subtitle">Basic details required under MoSJE statutory guidelines.</p>
+
+            <!-- Question 1: Age -->
+            <div class="form-group" style="margin-top: 1.4rem;">
+                <label style="display: block; font-weight: 600; font-size: 0.88rem; color: #334155; margin-bottom: 0.4rem;" data-i18n="prof_age_label">1. Your Age (Years) *</label>
+                <input type="number" id="input-age" name="age" min="18" max="75" required placeholder="Enter your age (e.g. 24)" style="width: 100%; padding: 0.65rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.9rem;">
+            </div>
+
+            <!-- Question 2: Gender -->
+            <div class="form-group" style="margin-top: 1.2rem;">
+                <label style="display: block; font-weight: 600; font-size: 0.88rem; color: #334155; margin-bottom: 0.4rem;" data-i18n="prof_gender_label">2. Gender *</label>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem;">
+                    <label style="display: flex; align-items: center; justify-content: center; gap: 0.45rem; border: 1px solid var(--border); padding: 0.65rem 0.4rem; border-radius: var(--radius-sm); cursor: pointer; background: #fff; font-size: 0.88rem;">
+                        <input type="radio" name="gender" value="Female" style="cursor: pointer;">
+                        <span data-i18n="gender_f">Female</span>
+                    </label>
+                    <label style="display: flex; align-items: center; justify-content: center; gap: 0.45rem; border: 1px solid var(--border); padding: 0.65rem 0.4rem; border-radius: var(--radius-sm); cursor: pointer; background: #fff; font-size: 0.88rem;">
+                        <input type="radio" name="gender" value="Male" style="cursor: pointer;">
+                        <span data-i18n="gender_m">Male</span>
+                    </label>
+                    <label style="display: flex; align-items: center; justify-content: center; gap: 0.45rem; border: 1px solid var(--border); padding: 0.65rem 0.4rem; border-radius: var(--radius-sm); cursor: pointer; background: #fff; font-size: 0.88rem;">
+                        <input type="radio" name="gender" value="Other" style="cursor: pointer;">
+                        <span data-i18n="gender_o">Other</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 3: Social Category -->
+            <div class="form-group" style="margin-top: 1.2rem;">
+                <label style="display: block; font-weight: 600; font-size: 0.88rem; color: #334155; margin-bottom: 0.4rem;" data-i18n="prof_cat_label">3. Social Category *</label>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem;">
+                    <label style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; border: 1px solid var(--border); padding: 0.65rem 0.3rem; border-radius: var(--radius-sm); cursor: pointer; background: #fff; font-size: 0.88rem;">
+                        <input type="radio" name="category" value="SC" style="cursor: pointer;">
+                        <span>SC</span>
+                    </label>
+                    <label style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; border: 1px solid var(--border); padding: 0.65rem 0.3rem; border-radius: var(--radius-sm); cursor: pointer; background: #fff; font-size: 0.88rem;">
+                        <input type="radio" name="category" value="ST" style="cursor: pointer;">
+                        <span>ST</span>
+                    </label>
+                    <label style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; border: 1px solid var(--border); padding: 0.65rem 0.3rem; border-radius: var(--radius-sm); cursor: pointer; background: #fff; font-size: 0.88rem;">
+                        <input type="radio" name="category" value="OBC" style="cursor: pointer;">
+                        <span>OBC</span>
+                    </label>
+                    <label style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; border: 1px solid var(--border); padding: 0.65rem 0.3rem; border-radius: var(--radius-sm); cursor: pointer; background: #fff; font-size: 0.88rem;">
+                        <input type="radio" name="category" value="General" style="cursor: pointer;">
+                        <span>General</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 4: Education Status -->
+            <div class="form-group" style="margin-top: 1.2rem;">
+                <label style="display: block; font-weight: 600; font-size: 0.88rem; color: #334155; margin-bottom: 0.4rem;" data-i18n="prof_edu_label">4. Education Status</label>
+                <select name="education" style="width: 100%; padding: 0.65rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.9rem; background: #fff;">
+                    <option value="" disabled selected data-i18n-opt="opt_edu_placeholder">-- Select Your Education Level --</option>
+                    <option value="school" data-i18n-opt="opt_edu_school">School Pass (10th / 12th)</option>
+                    <option value="graduate" data-i18n-opt="opt_edu_grad">Graduate / Degree Holder</option>
+                    <option value="college_student" data-i18n-opt="opt_edu_coll">Currently in College / Technical Institute</option>
+                    <option value="none" data-i18n-opt="opt_edu_none">No Formal Schooling</option>
+                </select>
+            </div>
+
+            <div style="margin-top: 2rem; display: flex; justify-content: flex-end; border-top: 1px solid var(--border); padding-top: 1.2rem;">
+                <button type="button" class="btn-primary" onclick="validateStep1AndProceed()">
+                    <span data-i18n="prof_next_loan">Next: Loan Need</span>
+                    <svg class="icon-svg" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 2: Project / Loan Purpose -->
+        <div class="card form-step-card" id="step-2" style="display: none; padding: 2rem;">
+            <span class="badge-clean badge-neutral" data-i18n="step_tag2">Step 2 of 3</span>
+            <h2 style="margin-top: 0.5rem; font-size: 1.35rem; color: #0f172a;" data-i18n="prof_step2_title">What do you need funds for?</h2>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.2rem;" data-i18n="prof_step2_sub">Select a standard trade template or enter your custom requirement.</p>
+
+            <!-- Standard Trade Quotation Preset Dropdown -->
+            <div class="form-group" style="margin-top: 1.4rem;">
+                <label style="display: block; font-weight: 600; font-size: 0.88rem; color: #1e3a8a; margin-bottom: 0.4rem;" data-i18n="prof_trade_tpl">Standard Trade Benchmark Quotation (Optional)</label>
+                <select id="trade-template-select" onchange="applyTradeBenchmark()" style="width: 100%; padding: 0.65rem 0.8rem; border: 1.5px solid var(--primary-accent); border-radius: var(--radius-sm); font-size: 0.9rem; background: var(--accent-light);">
+                    <option value="" selected data-i18n-opt="opt_trade_placeholder">-- Select a Standard Trade Template (Optional) --</option>
+                    <option value="tailoring" data-i18n-opt="opt_trade_tailor">Tailoring Boutique Unit (2 Machines + Fabric) - ₹85,000</option>
+                    <option value="erickshaw" data-i18n-opt="opt_trade_rickshaw">E-Rickshaw Commercial Battery Vehicle - ₹2,20,000</option>
+                    <option value="kirana" data-i18n-opt="opt_trade_kirana">Kirana &amp; Retail Grocery Store - ₹1,40,000</option>
+                    <option value="cobbler" data-i18n-opt="opt_trade_cobbler">Footwear Repair &amp; Artisan Cobbler Trade - ₹45,000</option>
+                    <option value="btech" data-i18n-opt="opt_trade_btech">Higher Technical Education (B.Tech / BCA Degree) - ₹4,50,000</option>
+                </select>
+                <small style="color: var(--text-muted); font-size: 0.78rem; display: block; margin-top: 0.3rem;" data-i18n="prof_trade_subtext">Auto-fills verified project cost &amp; trade keywords compliant with MoSJE limits.</small>
+            </div>
+
+            <!-- Trade Purpose with Voice Recognition -->
+            <div class="form-group" style="margin-top: 1.2rem;">
+                <label style="display: block; font-weight: 600; font-size: 0.88rem; color: #334155; margin-bottom: 0.4rem;" data-i18n="prof_purpose_lbl">Business Description / Trade Purpose *</label>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input type="text" id="purpose-input" name="purpose" required placeholder="Type your trade (e.g. Silai Machine, Kirana Store...)" style="flex: 1; padding: 0.65rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.9rem;">
+                    
+                    <button type="button" class="btn-voice" id="mic-action-btn" onclick="startVoiceInput()">
+                        <svg class="icon-svg mic-idle-icon" style="width: 15px; height: 15px;" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                        <span id="mic-btn-label" data-i18n="prof_mic_lbl">Voice Input</span>
+                        <div class="sound-wave">
+                            <span class="wave-bar"></span>
+                            <span class="wave-bar"></span>
+                            <span class="wave-bar"></span>
+                        </div>
+                    </button>
+                </div>
+
+                <div id="listening-badge-box" class="listening-badge">
+                    <span class="pulse-dot"></span>
+                    <span data-i18n="prof_listen_badge">Listening... Speak your business requirement clearly</span>
+                </div>
+            </div>
+
+            <!-- Dynamic Cost Field -->
+            <div class="form-group" style="margin-top: 1.2rem;">
+                <label id="cost-label" style="display: block; font-weight: 600; font-size: 0.88rem; color: #334155; margin-bottom: 0.4rem;" data-i18n="prof_cost_lbl">Required Project Cost (₹) *</label>
+                <input type="number" id="cost-input" name="project_cost" min="10000" max="5000000" step="5000" required placeholder="Enter project budget (e.g. 85000)" style="width: 100%; padding: 0.65rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.9rem;">
+                <small id="cost-subtext" style="color: var(--text-muted); font-size: 0.78rem; display: block; margin-top: 0.3rem;" data-i18n="prof_cost_subtext">
+                    Government provides 90% to 95% funding at concessional rates (4.0% to 6.5%).
+                </small>
+            </div>
+
+            <input type="hidden" name="intent" id="intent-hidden" value="micro">
+
+            <div style="margin-top: 2rem; display: flex; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 1.2rem;">
+                <button type="button" class="btn-outline" onclick="goToStep(1)">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    <span data-i18n="back_btn">Back</span>
+                </button>
+                <button type="button" class="btn-primary" onclick="validateStep2AndProceed()">
+                    <span data-i18n="prof_next_income">Next: Income &amp; Location</span>
+                    <svg class="icon-svg" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 3: Income & Location -->
+        <div class="card form-step-card" id="step-3" style="display: none; padding: 2rem;">
+            <span class="badge-clean badge-neutral" data-i18n="step_tag3">Step 3 of 3</span>
+            <h2 style="margin-top: 0.5rem; font-size: 1.35rem; color: #0f172a;" data-i18n="prof_step3_title">Income &amp; Location</h2>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.2rem;" data-i18n="prof_step3_sub">Final checks to verify statutory compliance.</p>
+
+            <!-- Question 6: Annual Family Income -->
+            <div class="form-group" style="margin-top: 1.4rem;">
+                <label style="display: block; font-weight: 600; font-size: 0.88rem; color: #334155; margin-bottom: 0.4rem;" data-i18n="prof_inc_lbl">Annual Family Income (₹) *</label>
+                <input type="number" id="income-field" name="income" min="1000" max="1500000" required placeholder="Enter total household income (e.g. 150000)" style="width: 100%; padding: 0.65rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.9rem;">
+                <small style="color: var(--text-muted); font-size: 0.78rem; display: block; margin-top: 0.3rem;" data-i18n="prof_inc_subtext">Statutory ceiling is ₹5,00,000 for MoSJE/NSFDC welfare schemes.</small>
+            </div>
+
+            <!-- Question 7: State & District with Direct GPS Auto-Selection -->
+            <div class="form-group" style="margin-top: 1.2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                    <label style="font-weight: 600; font-size: 0.88rem; color: #334155; margin: 0;" data-i18n="prof_place_lbl">State &amp; District *</label>
+                    <button type="button" id="btn-gps-auto" onclick="acquireDeviceLocation()" class="btn-outline-sm" style="color: var(--primary-accent); border-color: #bfdbfe; background: var(--accent-light); display: inline-flex; align-items: center; gap: 0.3rem; font-weight: 700;">
+                        <svg class="icon-svg" style="width: 13px; height: 13px;" viewBox="0 0 24 24"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        <span id="gps-btn-label" data-i18n="prof_gps_btn">Auto-Detect via GPS</span>
+                    </button>
+                </div>
+                <div id="gps-status-label" style="font-size: 0.8rem; font-weight: 600; color: #0f766e; margin-bottom: 0.45rem;"></div>
+                
+                <div style="display: flex; gap: 0.8rem;">
+                    <!-- State Selection Dropdown -->
+                    <select name="state" id="user-state" onchange="updateDistrictsDropdown()" required style="flex: 1; padding: 0.65rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.9rem; background: #fff;">
+                    </select>
+
+                    <!-- Dynamically Populated District Dropdown -->
+                    <select name="district" id="user-district" required style="flex: 1; padding: 0.65rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.9rem; background: #fff; font-weight: 600;">
+                        <option value="" disabled selected data-i18n-opt="opt_dist_placeholder">-- Select District --</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Hidden Location Coordinates for Backend Routing Engine -->
+            <input type="hidden" name="user_lat" id="user-lat" value="28.9845">
+            <input type="hidden" name="user_lng" id="user-lng" value="77.7064">
+
+            <!-- Defaults for Scheme Matching Engine -->
+            <input type="hidden" name="business_status" value="New">
+            <input type="hidden" name="sector" id="sector-hidden" value="Micro">
+            <input type="hidden" name="business_stage" value="Starting">
+            <input type="hidden" name="area" value="Rural">
+            <input type="hidden" name="disability" value="No">
+
+            <div style="margin-top: 2rem; display: flex; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 1.2rem;">
+                <button type="button" class="btn-outline" onclick="goToStep(2)">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    <span data-i18n="back_btn">Back</span>
+                </button>
+                <button type="button" class="btn-primary" onclick="validateAndSubmitProfile()" style="background: var(--success);">
+                    <span data-i18n="prof_submit">Find Matching Schemes</span>
+                    <svg class="icon-svg" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </button>
+            </div>
+        </div>
+
+    </form>
+
+    <!-- Clean Simple Loading Animation Screen -->
+    <div id="analyzing-screen" class="card" style="display: none; padding: 2.5rem 1.5rem; text-align: center;">
+        <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--accent-light); color: var(--primary-accent); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+            <svg class="icon-svg" style="width: 24px; height: 24px;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </div>
+        <h2 style="font-size: 1.25rem; color: #0f172a;" data-i18n="prof_eval_title">Evaluating Statutory Compliance...</h2>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.5rem;" data-i18n="prof_eval_sub">Executing MoSJE guidelines &amp; NPA routing rules.</p>
+
+        <div style="background: #e2e8f0; height: 8px; border-radius: 999px; overflow: hidden; margin-bottom: 0.8rem;">
+            <div id="simple-load-bar" style="width: 0%; height: 100%; background: var(--primary-accent); transition: width 0.05s ease;"></div>
+        </div>
+        <span id="simple-load-text" style="color: var(--primary-accent); font-weight: 700; font-size: 0.9rem;">0%</span>
+    </div>
+</div>
+
+<script>
+// Pure Placeholders Dictionary for Profile Page
+var profilePlaceholders = {
+    en: {
+        age: "Enter your age (e.g. 24)",
+        purpose: "Type your trade (e.g. Silai Machine, Kirana Store...)",
+        cost: "Enter project budget (e.g. 85000)",
+        income: "Enter total household income (e.g. 150000)"
+    },
+    hi: {
+        age: "अपनी आयु दर्ज करें (उदा. 24)",
+        purpose: "व्यवसाय का नाम दर्ज करें (उदा. सिलाई मशीन, किराना स्टोर...)",
+        cost: "परियोजना का बजट दर्ज करें (उदा. 85000)",
+        income: "परिवार की कुल वार्षिक आय दर्ज करें (उदा. 150000)"
+    }
+};
+
+function updateProfilePlaceholders(lang) {
+    var ph = profilePlaceholders[lang] || profilePlaceholders.en;
+    
+    var ageInp = document.getElementById("input-age");
+    if (ageInp) ageInp.placeholder = ph.age;
+
+    var purpInp = document.getElementById("purpose-input");
+    if (purpInp) purpInp.placeholder = ph.purpose;
+
+    var costInp = document.getElementById("cost-input");
+    if (costInp) costInp.placeholder = ph.cost;
+
+    var incInp = document.getElementById("income-field");
+    if (incInp) incInp.placeholder = ph.income;
+}
+
+// Comprehensive States Dictionary
+var indianStatesList = [
+    { en: "Andaman and Nicobar Islands", hi: "अंडमान और निकोबार द्वीप समूह" },
+    { en: "Andhra Pradesh", hi: "आंध्र प्रदेश" },
+    { en: "Arunachal Pradesh", hi: "अरुणाचल प्रदेश" },
+    { en: "Assam", hi: "असम" },
+    { en: "Bihar", hi: "बिहार" },
+    { en: "Chandigarh", hi: "चंडीगढ़" },
+    { en: "Chhattisgarh", hi: "छत्तीसगढ़" },
+    { en: "Dadra and Nagar Haveli and Daman and Diu", hi: "दादरा और नगर हवेली एवं दमन और दीव" },
+    { en: "Delhi", hi: "दिल्ली" },
+    { en: "Goa", hi: "गोवा" },
+    { en: "Gujarat", hi: "गुजरात" },
+    { en: "Haryana", hi: "हरियाणा" },
+    { en: "Himachal Pradesh", hi: "हिमाचल प्रदेश" },
+    { en: "Jammu and Kashmir", hi: "जम्मू और कश्मीर" },
+    { en: "Jharkhand", hi: "झारखंड" },
+    { en: "Karnataka", hi: "कर्नाटक" },
+    { en: "Kerala", hi: "केरल" },
+    { en: "Ladakh", hi: "लद्दाख" },
+    { en: "Lakshadweep", hi: "लक्षद्वीप" },
+    { en: "Madhya Pradesh", hi: "मध्य प्रदेश" },
+    { en: "Maharashtra", hi: "महाराष्ट्र" },
+    { en: "Manipur", hi: "मणिपुर" },
+    { en: "Meghalaya", hi: "मेघालय" },
+    { en: "Mizoram", hi: "मिजोरम" },
+    { en: "Nagaland", hi: "नागालैंड" },
+    { en: "Odisha", hi: "ओडिशा" },
+    { en: "Puducherry", hi: "पुडुचेरी" },
+    { en: "Punjab", hi: "पंजाब" },
+    { en: "Rajasthan", hi: "राजस्थान" },
+    { en: "Sikkim", hi: "सिक्किम" },
+    { en: "Tamil Nadu", hi: "तमिलनाडु" },
+    { en: "Telangana", hi: "तेलंगाना" },
+    { en: "Tripura", hi: "त्रिपुरा" },
+    { en: "Uttar Pradesh", hi: "उत्तर प्रदेश" },
+    { en: "Uttarakhand", hi: "उत्तराखंड" },
+    { en: "West Bengal", hi: "पश्चिम बंगाल" }
+];
+
+// Dual-Language Districts Dictionary
+var localizedDistrictsMap = {
+    "Uttarakhand": [
+        { en: "Almora", hi: "अल्मोड़ा" },
+        { en: "Bageshwar", hi: "बागेश्वर" },
+        { en: "Chamoli", hi: "चमोली" },
+        { en: "Champawat", hi: "चंपावत" },
+        { en: "Dehradun", hi: "देहरादून" },
+        { en: "Haridwar", hi: "हरिद्वार" },
+        { en: "Nainital", hi: "नैनीताल" },
+        { en: "Pauri Garhwal", hi: "पौड़ी गढ़वाल" },
+        { en: "Pithoragarh", hi: "पिथौरागढ़" },
+        { en: "Rudraprayag", hi: "रुद्रप्रयाग" },
+        { en: "Tehri Garhwal", hi: "टिहरी गढ़वाल" },
+        { en: "Udham Singh Nagar", hi: "उधम सिंह नगर" },
+        { en: "Uttarkashi", hi: "उत्तरकाशी" }
+    ],
+    "Uttar Pradesh": [
+        { en: "Agra", hi: "आगरा" },
+        { en: "Aligarh", hi: "अलीगढ़" },
+        { en: "Ayodhya", hi: "अयोध्या" },
+        { en: "Bareilly", hi: "बरेली" },
+        { en: "Budaun", hi: "बदायूँ" },
+        { en: "Firozabad", hi: "फ़िरोज़ाबाद" },
+        { en: "Gautam Buddha Nagar (Noida)", hi: "गौतम बुद्ध नगर (नोएडा)" },
+        { en: "Ghaziabad", hi: "गाज़ियाबाद" },
+        { en: "Gorakhpur", hi: "गोरखपुर" },
+        { en: "Jhansi", hi: "झांसी" },
+        { en: "Kanpur Nagar", hi: "कानपुर नगर" },
+        { en: "Lucknow", hi: "लखनऊ" },
+        { en: "Mathura", hi: "मथुरा" },
+        { en: "Meerut", hi: "मेरठ" },
+        { en: "Moradabad", hi: "मुरादाबाद" },
+        { en: "Muzaffarnagar", hi: "मुज़फ़्फ़रनगर" },
+        { en: "Prayagraj", hi: "प्रयागराज" },
+        { en: "Rampur", hi: "रामपुर" },
+        { en: "Saharanpur", hi: "सहारनपुर" },
+        { en: "Shahjahanpur", hi: "शाहजहाँपुर" },
+        { en: "Varanasi", hi: "वाराणसी" }
+    ],
+    "Delhi": [
+        { en: "Central Delhi", hi: "मध्य दिल्ली" },
+        { en: "East Delhi", hi: "पूर्वी दिल्ली" },
+        { en: "New Delhi", hi: "नई दिल्ली" },
+        { en: "North Delhi", hi: "उत्तरी दिल्ली" },
+        { en: "North East Delhi", hi: "उत्तर पूर्वी दिल्ली" },
+        { en: "North West Delhi", hi: "उत्तर पश्चिम दिल्ली" },
+        { en: "Shahdara", hi: "शाहदरा" },
+        { en: "South Delhi", hi: "दक्षिणी दिल्ली" },
+        { en: "South East Delhi", hi: "दक्षिण पूर्वी दिल्ली" },
+        { en: "South West Delhi", hi: "दक्षिण पश्चिम दिल्ली" },
+        { en: "West Delhi", hi: "पश्चिमी दिल्ली" }
+    ],
+    "Bihar": [
+        { en: "Arrah (Bhojpur)", hi: "आरा (भोजपुर)" },
+        { en: "Begusarai", hi: "बेगूसराय" },
+        { en: "Bhagalpur", hi: "भागलपुर" },
+        { en: "Bihar Sharif (Nalanda)", hi: "बिहार शरीफ (नालंदा)" },
+        { en: "Chhapra (Saran)", hi: "छपरा (सारण)" },
+        { en: "Darbhanga", hi: "दरभंगा" },
+        { en: "Gaya", hi: "गया" },
+        { en: "Katihar", hi: "कटिहार" },
+        { en: "Motihari", hi: "मोतिहारी" },
+        { en: "Munger", hi: "मुंगेर" },
+        { en: "Muzaffarpur", hi: "मुजफ्फरपुर" },
+        { en: "Patna", hi: "पटना" },
+        { en: "Purnia", hi: "पूर्णिया" },
+        { en: "Samastipur", hi: "समस्तीपुर" },
+        { en: "Sasaram", hi: "सासाराम" }
+    ],
+    "Haryana": [
+        { en: "Ambala", hi: "अंबाला" },
+        { en: "Bahadurgarh", hi: "बहादुरगढ़" },
+        { en: "Bhiwani", hi: "भिवानी" },
+        { en: "Faridabad", hi: "फरीदाबाद" },
+        { en: "Gurugram", hi: "गुरुग्राम" },
+        { en: "Hisar", hi: "हिसार" },
+        { en: "Karnal", hi: "करनाल" },
+        { en: "Panchkula", hi: "पंचकुला" },
+        { en: "Panipat", hi: "पानीपत" },
+        { en: "Rohtak", hi: "रोहतक" },
+        { en: "Sirsa", hi: "सिरसा" },
+        { en: "Sonipat", hi: "सोनीपत" },
+        { en: "Yamunanagar", hi: "यमुनानगर" }
+    ],
+    "Himachal Pradesh": [
+        { en: "Bilaspur", hi: "बिलासपुर" },
+        { en: "Chamba", hi: "चंबा" },
+        { en: "Hamirpur", hi: "हमीरपुर" },
+        { en: "Kangra (Dharamshala)", hi: "कांगड़ा (धर्मशाला)" },
+        { en: "Kullu", hi: "कुल्लू" },
+        { en: "Mandi", hi: "मंडी" },
+        { en: "Shimla", hi: "शिमला" },
+        { en: "Sirmaur", hi: "सिरमौर" },
+        { en: "Solan", hi: "सोलन" },
+        { en: "Una", hi: "ऊना" }
+    ],
+    "Punjab": [
+        { en: "Amritsar", hi: "अमृतसर" },
+        { en: "Bathinda", hi: "बठिंडा" },
+        { en: "Firozpur", hi: "फिरोजपुर" },
+        { en: "Hoshiarpur", hi: "होशियारपुर" },
+        { en: "Jalandhar", hi: "जालंधर" },
+        { en: "Ludhiana", hi: "लुधियाना" },
+        { en: "Moga", hi: "मोगा" },
+        { en: "Pathankot", hi: "पठानकोट" },
+        { en: "Patiala", hi: "पटियाला" },
+        { en: "SAS Nagar (Mohali)", hi: "मोहाली" }
+    ],
+    "Rajasthan": [
+        { en: "Ajmer", hi: "अजमेर" },
+        { en: "Alwar", hi: "अलवर" },
+        { en: "Bharatpur", hi: "भरतपुर" },
+        { en: "Bhilwara", hi: "भीलवाड़ा" },
+        { en: "Bikaner", hi: "बीकानेर" },
+        { en: "Chittorgarh", hi: "चित्तौड़गढ़" },
+        { en: "Jaipur", hi: "जयपुर" },
+        { en: "Jodhpur", hi: "जोधपुर" },
+        { en: "Kota", hi: "कोटा" },
+        { en: "Pali", hi: "पाली" },
+        { en: "Sikar", hi: "सीकर" },
+        { en: "Sri Ganganagar", hi: "श्री गंगानगर" },
+        { en: "Udaipur", hi: "उदयपुर" }
+    ],
+    "Madhya Pradesh": [
+        { en: "Bhopal", hi: "भोपाल" },
+        { en: "Chhindwara", hi: "छिंदवाड़ा" },
+        { en: "Dewas", hi: "देवास" },
+        { en: "Gwalior", hi: "ग्वालियर" },
+        { en: "Indore", hi: "इंदौर" },
+        { en: "Jabalpur", hi: "जबलपुर" },
+        { en: "Katni", hi: "कटनी" },
+        { en: "Ratlam", hi: "रतलाम" },
+        { en: "Rewa", hi: "रीवा" },
+        { en: "Sagar", hi: "सागर" },
+        { en: "Satna", hi: "सतना" },
+        { en: "Singrauli", hi: "सिंगरौली" },
+        { en: "Ujjain", hi: "उज्जैन" }
+    ],
+    "Maharashtra": [
+        { en: "Akola", hi: "अकोला" },
+        { en: "Amravati", hi: "अमरावती" },
+        { en: "Chhatrapati Sambhajinagar", hi: "छत्रपति संभाजीनगर" },
+        { en: "Jalgaon", hi: "जलगांव" },
+        { en: "Kolhapur", hi: "कोल्हापुर" },
+        { en: "Latur", hi: "लातूर" },
+        { en: "Mumbai City", hi: "मुंबई शहर" },
+        { en: "Mumbai Suburban", hi: "मुंबई उपनगर" },
+        { en: "Nagpur", hi: "नागपुर" },
+        { en: "Nanded", hi: "नांदेड़" },
+        { en: "Nashik", hi: "नासिक" },
+        { en: "Navi Mumbai", hi: "नवी मुंबई" },
+        { en: "Pune", hi: "पुणे" },
+        { en: "Solapur", hi: "सोलापुर" },
+        { en: "Thane", hi: "ठाणे" }
+    ]
+};
+
+// Render State Dropdown in Pure Localized Language
+function renderStateDropdownLocalized(lang, preSelectedState) {
+    var stateSelect = document.getElementById("user-state");
+    if (!stateSelect) return;
+
+    var currentVal = preSelectedState || stateSelect.value;
+    stateSelect.innerHTML = "";
+
+    var defaultOpt = document.createElement("option");
+    defaultOpt.value = "";
+    defaultOpt.disabled = true;
+    defaultOpt.selected = !currentVal;
+    defaultOpt.innerText = (lang === 'hi') ? "-- राज्य / केंद्र शासित प्रदेश चुनें --" : "-- Select State / UT --";
+    stateSelect.appendChild(defaultOpt);
+
+    indianStatesList.forEach(function(item) {
+        var opt = document.createElement("option");
+        opt.value = item.en;
+        opt.innerText = (lang === 'hi') ? item.hi : item.en;
+        if (currentVal && currentVal.toLowerCase() === item.en.toLowerCase()) {
+            opt.selected = true;
+        }
+        stateSelect.appendChild(opt);
+    });
+
+    updateDistrictsDropdown();
+    updateProfilePlaceholders(lang);
+}
+
+// Render District Dropdown in Pure Localized Language
+function updateDistrictsDropdown(selectedDistrict) {
+    var stateSelect = document.getElementById("user-state");
+    var districtSelect = document.getElementById("user-district");
+    if (!stateSelect || !districtSelect) return;
+
+    var currentState = stateSelect.value;
+    var currentLang = localStorage.getItem('schemesathi_lang') || 'en';
+
+    if (!currentState) {
+        districtSelect.innerHTML = '<option value="" disabled selected>' + (currentLang === 'hi' ? '-- जिला चुनें --' : '-- Select District --') + '</option>';
+        return;
+    }
+
+    var list = localizedDistrictsMap[currentState] || [];
+    districtSelect.innerHTML = '<option value="" disabled selected>' + (currentLang === 'hi' ? '-- जिला चुनें --' : '-- Select District --') + '</option>';
+
+    if (list.length > 0) {
+        list.forEach(function(distObj) {
+            var opt = document.createElement("option");
+            opt.value = distObj.en;
+            opt.innerText = (currentLang === 'hi') ? distObj.hi : distObj.en;
+            if (selectedDistrict && (selectedDistrict.toLowerCase() === distObj.en.toLowerCase() || selectedDistrict.toLowerCase().includes(distObj.en.toLowerCase()))) {
+                opt.selected = true;
+            }
+            districtSelect.appendChild(opt);
+        });
+    } else {
+        var fallbackOpt = document.createElement("option");
+        fallbackOpt.value = "Central District";
+        fallbackOpt.innerText = (currentLang === 'hi') ? "मुख्यालय / केंद्रीय जिला" : "Headquarters / Central District";
+        districtSelect.appendChild(fallbackOpt);
+    }
+}
+
+function autoSelectStateAndDistrict(detectedState, detectedDistrict) {
+    var stateSelect = document.getElementById("user-state");
+    if (!stateSelect) return false;
+
+    var matchedState = null;
+    for (var i = 0; i < indianStatesList.length; i++) {
+        var s = indianStatesList[i];
+        if (s.en.toLowerCase() === detectedState.toLowerCase() || detectedState.toLowerCase().includes(s.en.toLowerCase())) {
+            matchedState = s.en;
+            break;
+        }
+    }
+
+    if (matchedState) {
+        stateSelect.value = matchedState;
+        updateDistrictsDropdown(detectedDistrict);
+        return true;
+    }
+    return false;
+}
+
+function acquireDeviceLocation() {
+    var lbl = document.getElementById('gps-status-label');
+    var btnLabel = document.getElementById('gps-btn-label');
+    var currentLang = localStorage.getItem('schemesathi_lang') || 'en';
+    
+    if (btnLabel) btnLabel.innerText = (currentLang === 'hi') ? "खोज रहे हैं..." : "Detecting...";
+    if (lbl) lbl.innerText = (currentLang === 'hi') ? "GPS से जुड़ रहे हैं..." : "Connecting to device GPS...";
+
+    function handleSuccess(lat, lng, stateName, districtName) {
+        document.getElementById('user-lat').value = lat;
+        document.getElementById('user-lng').value = lng;
+        
+        var isSelected = autoSelectStateAndDistrict(stateName, districtName);
+        if (btnLabel) btnLabel.innerText = (currentLang === 'hi') ? "GPS सत्यापित ✓" : "GPS Verified ✓";
+        
+        if (lbl) {
+            if (isSelected) {
+                lbl.innerText = (currentLang === 'hi') ? "✓ " + districtName + ", " + stateName + " स्वतः चुना गया।" : "✓ " + districtName + ", " + stateName + " auto-selected successfully.";
+            } else {
+                lbl.innerText = (currentLang === 'hi') ? "✓ स्थान पाया गया (" + districtName + ", " + stateName + ")।" : "✓ Location detected (" + districtName + ", " + stateName + ").";
+            }
+        }
+    }
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function(pos) {
+                var lat = pos.coords.latitude;
+                var lng = pos.coords.longitude;
+
+                fetch("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lng)
+                    .then(function(res) { return res.json(); })
+                    .then(function(data) {
+                        var addr = data.address || {};
+                        var state = addr.state || "Uttar Pradesh";
+                        var district = addr.state_district || addr.county || addr.city || addr.town || "Meerut";
+                        district = district.replace(/district/gi, "").trim();
+                        handleSuccess(lat, lng, state, district);
+                    })
+                    .catch(function() {
+                        fallbackToIpLocation();
+                    });
+            },
+            function() {
+                fallbackToIpLocation();
+            },
+            { timeout: 7000, enableHighAccuracy: true }
+        );
+    } else {
+        fallbackToIpLocation();
+    }
+
+    function fallbackToIpLocation() {
+        if (lbl) lbl.innerText = (currentLang === 'hi') ? "नेटवर्क IP से स्थान का पता लगाया जा रहा है..." : "Detecting location via network IP...";
+        fetch("https://ipapi.co/json/")
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                if (data && data.region && data.city) {
+                    var lat = data.latitude || 28.9845;
+                    var lng = data.longitude || 77.7064;
+                    handleSuccess(lat, lng, data.region, data.city);
+                } else {
+                    handleSuccess(28.9845, 77.7064, "Uttar Pradesh", "Meerut");
+                }
+            })
+            .catch(function() {
+                handleSuccess(28.9845, 77.7064, "Uttar Pradesh", "Meerut");
+            });
+    }
+}
+
+function goToStep(step) {
+    document.getElementById('step-1').style.display = 'none';
+    document.getElementById('step-2').style.display = 'none';
+    document.getElementById('step-3').style.display = 'none';
+
+    document.getElementById('step-' + step).style.display = 'block';
+
+    for (var i = 1; i <= 3; i++) {
+        var circle = document.getElementById('indicator-' + i);
+        if (circle) {
+            if (i <= step) {
+                circle.style.background = 'var(--primary-accent)';
+                circle.style.color = '#ffffff';
+            } else {
+                circle.style.background = '#e2e8f0';
+                circle.style.color = '#64748b';
+            }
+        }
+    }
+
+    if (step === 3) {
+        var stateSelect = document.getElementById("user-state");
+        if (stateSelect && !stateSelect.value) {
+            acquireDeviceLocation();
+        }
+    }
+}
+
+function validateStep1AndProceed() {
+    var currentLang = localStorage.getItem('schemesathi_lang') || 'en';
+    var age = document.getElementById('input-age').value;
+    if (!age || age < 18 || age > 75) {
+        alert(currentLang === 'hi' ? "कृपया 18 से 75 के बीच वैध आयु दर्ज करें।" : "Please enter a valid age between 18 and 75.");
+        return;
+    }
+
+    var genderChecked = document.querySelector('input[name="gender"]:checked');
+    if (!genderChecked) {
+        alert(currentLang === 'hi' ? "कृपया अपना लिंग चुनें।" : "Please select your gender.");
+        return;
+    }
+
+    var categoryChecked = document.querySelector('input[name="category"]:checked');
+    if (!categoryChecked) {
+        alert(currentLang === 'hi' ? "कृपया अपनी सामाजिक श्रेणी चुनें।" : "Please select your social category.");
+        return;
+    }
+
+    goToStep(2);
+}
+
+function validateStep2AndProceed() {
+    var currentLang = localStorage.getItem('schemesathi_lang') || 'en';
+    var purpose = document.getElementById('purpose-input').value.trim();
+    if (!purpose) {
+        alert(currentLang === 'hi' ? "कृपया अपने व्यवसाय का उद्देश्य दर्ज करें।" : "Please enter your business or trade purpose.");
+        return;
+    }
+
+    var cost = document.getElementById('cost-input').value;
+    if (!cost || cost < 10000) {
+        alert(currentLang === 'hi' ? "कृपया न्यूनतम ₹10,000 की परियोजना लागत दर्ज करें।" : "Please enter a project cost (minimum ₹10,000).");
+        return;
+    }
+
+    goToStep(3);
+}
+
+function applyTradeBenchmark() {
+    var sel = document.getElementById('trade-template-select').value;
+    var costInput = document.getElementById('cost-input');
+    var purposeInput = document.getElementById('purpose-input');
+    var intentHidden = document.getElementById('intent-hidden');
+    var sectorHidden = document.getElementById('sector-hidden');
+    var currentLang = localStorage.getItem('schemesathi_lang') || 'en';
+
+    if (!sel) return;
+
+    if (sel === 'tailoring') {
+        costInput.value = 85000;
+        purposeInput.value = (currentLang === 'hi') ? 'सिलाई बुटीक एवं वस्त्र निर्माण इकाई' : 'Silai boutique and tailoring unit';
+        intentHidden.value = 'micro';
+        sectorHidden.value = 'tailoring';
+    } else if (sel === 'erickshaw') {
+        costInput.value = 220000;
+        purposeInput.value = (currentLang === 'hi') ? 'ई-रिक्शा वाणिज्यिक बैटरी वाहन' : 'E-Rickshaw commercial battery vehicle';
+        intentHidden.value = 'green';
+        sectorHidden.value = 'e_rickshaw';
+    } else if (sel === 'kirana') {
+        costInput.value = 140000;
+        purposeInput.value = (currentLang === 'hi') ? 'किराना एवं खुदरा जनरल स्टोर' : 'Kirana and retail grocery store';
+        intentHidden.value = 'micro';
+        sectorHidden.value = 'kirana';
+    } else if (sel === 'cobbler') {
+        costInput.value = 45000;
+        purposeInput.value = (currentLang === 'hi') ? 'जूता-चप्पल मरम्मत एवं कारीगर कार्य' : 'Footwear repair and artisan cobbler';
+        intentHidden.value = 'micro';
+        sectorHidden.value = 'cobbler';
+    } else if (sel === 'btech') {
+        costInput.value = 450000;
+        purposeInput.value = (currentLang === 'hi') ? 'उच्च तकनीकी शिक्षा पाठ्यक्रम शुल्क' : 'Higher technical education course fees';
+        intentHidden.value = 'education';
+        sectorHidden.value = 'education';
+    }
+}
+
+var globalRecognizer = null;
+
+function startVoiceInput() {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        alert("Voice recognition is not supported in this browser. Please use Chrome or Edge.");
+        return;
+    }
+
+    var micBtn = document.getElementById('mic-action-btn');
+    var label = document.getElementById('mic-btn-label');
+    var badge = document.getElementById('listening-badge-box');
+
+    if (globalRecognizer) {
+        globalRecognizer.stop();
+        return;
+    }
+
+    var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    globalRecognizer = new SpeechRecognition();
+    globalRecognizer.lang = 'hi-IN';
+    globalRecognizer.interimResults = false;
+
+    if (micBtn) micBtn.classList.add('recording');
+    if (label) label.innerText = 'Listening...';
+    if (badge) badge.classList.add('show');
+
+    globalRecognizer.onresult = function(event) {
+        var transcript = event.results[0][0].transcript;
+        document.getElementById('purpose-input').value = transcript;
+    };
+
+    globalRecognizer.onerror = function() {
+        stopVoiceAnimation();
+    };
+
+    globalRecognizer.onend = function() {
+        stopVoiceAnimation();
+    };
+
+    globalRecognizer.start();
+}
+
+function stopVoiceAnimation() {
+    var micBtn = document.getElementById('mic-action-btn');
+    var label = document.getElementById('mic-btn-label');
+    var badge = document.getElementById('listening-badge-box');
+
+    if (micBtn) micBtn.classList.remove('recording');
+    if (label) label.innerText = (localStorage.getItem('schemesathi_lang') === 'hi') ? 'बोलकर दर्ज करें' : 'Voice Input';
+    if (badge) badge.classList.remove('show');
+    globalRecognizer = null;
+}
+
+function validateAndSubmitProfile() {
+    var currentLang = localStorage.getItem('schemesathi_lang') || 'en';
+    var inc = parseFloat(document.getElementById('income-field').value);
+    if (!inc || isNaN(inc)) {
+        alert(currentLang === 'hi' ? "कृपया अपने परिवार की कुल वार्षिक आय दर्ज करें।" : "Please enter your total annual family income.");
+        return;
+    }
+    if (inc > 500000) {
+        alert(currentLang === 'hi' ? "चेतावनी: MoSJE/NSFDC नियमों के अनुसार 100% रियायती ऋण के लिए परिवार की वार्षिक आय ₹5,00,000 या कम होनी चाहिए।" : "Warning: MoSJE/NSFDC guidelines mandate an annual family income of <= ₹5,00,000 for 100% concessional credit.");
+    }
+
+    var state = document.getElementById('user-state').value;
+    if (!state) {
+        alert(currentLang === 'hi' ? "कृपया अपना राज्य / केंद्र शासित प्रदेश चुनें।" : "Please select your State / UT.");
+        return;
+    }
+
+    var district = document.getElementById('user-district').value;
+    if (!district) {
+        alert(currentLang === 'hi' ? "कृपया अपना जिला चुनें।" : "Please select your District.");
+        return;
+    }
+
+    document.getElementById('step-3').style.display = 'none';
+    document.querySelector('.progress-bar-container').style.display = 'none';
+    document.getElementById('analyzing-screen').style.display = 'block';
+
+    var pct = 0;
+    var bar = document.getElementById('simple-load-bar');
+    var txt = document.getElementById('simple-load-text');
+    var form = document.getElementById('scheme-profile-form');
+
+    var interval = setInterval(function() {
+        pct += 10;
+        if (bar) bar.style.width = pct + '%';
+        if (txt) txt.innerText = pct + '%';
+
+        if (pct >= 100) {
+            clearInterval(interval);
+            form.submit();
+        }
+    }, 40);
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    var currentLang = localStorage.getItem('schemesathi_lang') || 'en';
+    renderStateDropdownLocalized(currentLang);
+    updateProfilePlaceholders(currentLang);
+});
+</script>
+{% endblock %}

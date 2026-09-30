@@ -1,0 +1,321 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  .compare-pill-win {
+    background: #dcfce7;
+    color: #15803d;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-left: 0.4rem;
+  }
+  .compare-row-highlight {
+    background: #f8fafc;
+  }
+  .metric-label-hi {
+    display: block;
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: normal;
+    margin-top: 0.15rem;
+  }
+</style>
+
+<div class="compare-container" style="max-width: 1050px; margin: 0 auto; padding: 1.5rem 1rem;">
+    
+    <!-- Header -->
+    <div class="results-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h1 class="page-title" data-i18n="comp_title">Side-by-Side Scheme Comparison</h1>
+            <p class="page-subtitle" data-i18n="comp_subtitle">
+                Compare interest rates, government funding share, grace periods, and project ceilings to choose the best loan for your enterprise.
+            </p>
+        </div>
+        <a href="/recommendations" class="btn-outline-sm">
+            <svg class="icon-svg" style="width: 13px; height: 13px;" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span data-i18n="back_rec">Back to Recommendations</span>
+        </a>
+    </div>
+
+    <!-- Scheme Switcher Controls -->
+    <div class="card" style="padding: 1.2rem; margin-bottom: 1.5rem; background: #ffffff; border: 1px solid var(--border); display: flex; gap: 1.2rem; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 260px;">
+            <label style="display: block; font-size: 0.84rem; font-weight: 700; margin-bottom: 0.4rem; color: #1e3a8a;" data-i18n="comp_s1">
+                Compare Scheme 1:
+            </label>
+            <select onchange="location.href='/compare?id1=' + this.value + '&id2={{ s2.id }}'" style="width: 100%; padding: 0.55rem 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background: #f8fafc; font-size: 0.9rem; font-weight: 600;">
+                {% for s in all_schemes %}
+                    <option value="{{ s.id }}" {% if s.id == s1.id %}selected{% endif %}>{{ s.name }} ({{ s.interest_rate }}% p.a.)</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div style="font-weight: 800; font-size: 1rem; color: #94a3b8; background: #f1f5f9; padding: 0.5rem 0.8rem; border-radius: 50%;">VS</div>
+
+        <div style="flex: 1; min-width: 260px;">
+            <label style="display: block; font-size: 0.84rem; font-weight: 700; margin-bottom: 0.4rem; color: #0f766e;" data-i18n="comp_s2">
+                Compare Scheme 2:
+            </label>
+            <select onchange="location.href='/compare?id1={{ s1.id }}&id2=' + this.value" style="width: 100%; padding: 0.55rem 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background: #f8fafc; font-size: 0.9rem; font-weight: 600;">
+                {% for s in all_schemes %}
+                    <option value="{{ s.id }}" {% if s.id == s2.id %}selected{% endif %}>{{ s.name }} ({{ s.interest_rate }}% p.a.)</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <!-- Comparison Table Card -->
+    <div class="card" style="overflow-x: auto; padding: 0; border-radius: var(--radius-md);">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.92rem;">
+            <thead>
+                <tr style="background: #f8fafc; border-bottom: 2px solid var(--border);">
+                    <th style="padding: 1.1rem; width: 28%; color: #475569; font-weight: 700; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.5px;" data-i18n="col_metric">
+                        Statutory Metric (नियम)
+                    </th>
+                    <th style="padding: 1.1rem; width: 36%; color: #1e3a8a; font-weight: 800; border-left: 1px solid var(--border); font-size: 1.05rem;">
+                        {{ s1.name }}
+                        <div style="font-size: 0.78rem; font-weight: 600; color: #64748b; margin-top: 0.25rem;">{{ s1.ministry }}</div>
+                    </th>
+                    <th style="padding: 1.1rem; width: 36%; color: #0f766e; font-weight: 800; border-left: 1px solid var(--border); font-size: 1.05rem;">
+                        {{ s2.name }}
+                        <div style="font-size: 0.78rem; font-weight: 600; color: #64748b; margin-top: 0.25rem;">{{ s2.ministry }}</div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Interest Rate Row -->
+                <tr style="border-bottom: 1px solid var(--border);">
+                    <td style="padding: 1rem 1.1rem; font-weight: 700; color: #334155;">
+                        <span data-i18n="row_interest">Interest Rate (p.a.)</span>
+                        <span class="metric-label-hi" data-i18n="hi_interest">ब्याज दर (सालाना)</span>
+                    </td>
+                    <td style="padding: 1rem 1.1rem; border-left: 1px solid var(--border); font-size: 1.15rem; font-weight: 800; color: #16a34a;">
+                        {{ s1.interest_rate }}%
+                        {% if s1.interest_rate < s2.interest_rate %}
+                            <span class="compare-pill-win" data-i18n="pill_cheaper">&#10003; Cheaper</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 1rem 1.1rem; border-left: 1px solid var(--border); font-size: 1.15rem; font-weight: 800; color: #16a34a;">
+                        {{ s2.interest_rate }}%
+                        {% if s2.interest_rate < s1.interest_rate %}
+                            <span class="compare-pill-win" data-i18n="pill_cheaper">&#10003; Cheaper</span>
+                        {% endif %}
+                    </td>
+                </tr>
+
+                <!-- Government Loan Share -->
+                <tr class="compare-row-highlight" style="border-bottom: 1px solid var(--border);">
+                    <td style="padding: 0.9rem 1.1rem; font-weight: 700; color: #334155;">
+                        <span data-i18n="row_govt_share">Government Funding Share</span>
+                        <span class="metric-label-hi" data-i18n="hi_govt_share">सरकारी ऋण हिस्सा</span>
+                    </td>
+                    <td style="padding: 0.9rem 1.1rem; border-left: 1px solid var(--border); font-weight: 700; color: #0f172a;">
+                        <span data-i18n="up_to">Up to</span> {{ s1.govt_share_pct }}%
+                        {% if s1.govt_share_pct > s2.govt_share_pct %}
+                            <span class="compare-pill-win" data-i18n="pill_higher">&#10003; Higher Share</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.9rem 1.1rem; border-left: 1px solid var(--border); font-weight: 700; color: #0f172a;">
+                        <span data-i18n="up_to">Up to</span> {{ s2.govt_share_pct }}%
+                        {% if s2.govt_share_pct > s1.govt_share_pct %}
+                            <span class="compare-pill-win" data-i18n="pill_higher">&#10003; Higher Share</span>
+                        {% endif %}
+                    </td>
+                </tr>
+
+                <!-- Own Margin Contribution -->
+                <tr style="border-bottom: 1px solid var(--border);">
+                    <td style="padding: 0.9rem 1.1rem; font-weight: 700; color: #334155;">
+                        <span data-i18n="row_margin">Beneficiary Margin (Own Share)</span>
+                        <span class="metric-label-hi" data-i18n="hi_margin">खुद की लागत (मार्जिन)</span>
+                    </td>
+                    <td style="padding: 0.9rem 1.1rem; border-left: 1px solid var(--border); color: #475569; font-weight: 600;">
+                        {{ s1.promoter_share_pct }}% <span data-i18n="of_project">of Project Cost</span>
+                    </td>
+                    <td style="padding: 0.9rem 1.1rem; border-left: 1px solid var(--border); color: #475569; font-weight: 600;">
+                        {{ s2.promoter_share_pct }}% <span data-i18n="of_project">of Project Cost</span>
+                    </td>
+                </tr>
+
+                <!-- Moratorium Grace Window -->
+                <tr class="compare-row-highlight" style="border-bottom: 1px solid var(--border);">
+                    <td style="padding: 0.9rem 1.1rem; font-weight: 700; color: #334155;">
+                        <span data-i18n="row_moratorium">Moratorium (Grace Period)</span>
+                        <span class="metric-label-hi" data-i18n="hi_moratorium">शुरुआती छूट (बिना EMI के महीने)</span>
+                    </td>
+                    <td style="padding: 0.9rem 1.1rem; border-left: 1px solid var(--border); font-weight: 700; color: #0284c7;">
+                        {{ s1.moratorium_months }} <span data-i18n="months_zero_emi">Months (0 EMI)</span>
+                        {% if s1.moratorium_months > s2.moratorium_months %}
+                            <span class="compare-pill-win" data-i18n="pill_grace">&#10003; Longer Grace</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.9rem 1.1rem; border-left: 1px solid var(--border); font-weight: 700; color: #0284c7;">
+                        {{ s2.moratorium_months }} <span data-i18n="months_zero_emi">Months (0 EMI)</span>
+                        {% if s2.moratorium_months > s1.moratorium_months %}
+                            <span class="compare-pill-win" data-i18n="pill_grace">&#10003; Longer Grace</span>
+                        {% endif %}
+                    </td>
+                </tr>
+
+                <!-- Repayment Tenure -->
+                <tr style="border-bottom: 1px solid var(--border);">
+                    <td style="padding: 0.9rem 1.1rem; font-weight: 700; color: #334155;">
+                        <span data-i18n="row_tenure">Repayment Tenure</span>
+                        <span class="metric-label-hi" data-i18n="hi_tenure">वापसी की अवधि</span>
+                    </td>
+                    <td style="padding: 0.9rem 1.1rem; border-left: 1px solid var(--border); color: #334155;">
+                        <span data-i18n="up_to">Up to</span> {{ s1.max_tenure_months }} <span data-i18n="months_lbl">Months</span> ({{ (s1.max_tenure_months / 12) | round(1) }} <span data-i18n="years_lbl">Years</span>)
+                    </td>
+                    <td style="padding: 0.9rem 1.1rem; border-left: 1px solid var(--border); color: #334155;">
+                        <span data-i18n="up_to">Up to</span> {{ s2.max_tenure_months }} <span data-i18n="months_lbl">Months</span> ({{ (s2.max_tenure_months / 12) | round(1) }} <span data-i18n="years_lbl">Years</span>)
+                    </td>
+                </tr>
+
+                <!-- Project Cost Limits -->
+                <tr class="compare-row-highlight" style="border-bottom: 1px solid var(--border);">
+                    <td style="padding: 0.9rem 1.1rem; font-weight: 700; color: #334155;">
+                        <span data-i18n="row_budget">Allowable Project Budget</span>
+                        <span class="metric-label-hi" data-i18n="hi_budget">अनुमोदित परियोजना बजट</span>
+                    </td>
+                    <td style="padding: 0.9rem 1.1rem; border-left: 1px solid var(--border); font-weight: 700; color: #0f172a;">
+                        ₹{{ '{:,.0f}'.format(s1.min_project_cost) }} <span data-i18n="to_lbl">to</span> ₹{{ '{:,.0f}'.format(s1.max_project_cost) }}
+                    </td>
+                    <td style="padding: 0.9rem 1.1rem; border-left: 1px solid var(--border); font-weight: 700; color: #0f172a;">
+                        ₹{{ '{:,.0f}'.format(s2.min_project_cost) }} <span data-i18n="to_lbl">to</span> ₹{{ '{:,.0f}'.format(s2.max_project_cost) }}
+                    </td>
+                </tr>
+
+                <!-- Target Quota and Focus -->
+                <tr style="border-bottom: 1px solid var(--border);">
+                    <td style="padding: 0.9rem 1.1rem; font-weight: 700; color: #334155;">
+                        <span data-i18n="row_quota">Target Social Quota</span>
+                        <span class="metric-label-hi" data-i18n="hi_quota">लक्षित वर्ग एवं श्रेणी</span>
+                    </td>
+                    <td style="padding: 0.9rem 1.1rem; border-left: 1px solid var(--border); color: #334155;">
+                        {{ s1.gender }} &bull; {{ s1.category | join(', ') | upper }}
+                    </td>
+                    <td style="padding: 0.9rem 1.1rem; border-left: 1px solid var(--border); color: #334155;">
+                        {{ s2.gender }} &bull; {{ s2.category | join(', ') | upper }}
+                    </td>
+                </tr>
+
+                <!-- Action Row -->
+                <tr style="background: #f8fafc;">
+                    <td style="padding: 1.1rem; font-weight: 700; color: #334155;">
+                        <span data-i18n="row_action">Action</span>
+                        <span class="metric-label-hi" data-i18n="hi_action">योजना का चुनाव करें</span>
+                    </td>
+                    <td style="padding: 1.1rem; border-left: 1px solid var(--border);">
+                        <a href="/scheme/{{ s1.id }}" class="btn-primary" style="display: block; text-align: center; background: #1e3a8a; padding: 0.55rem 0.8rem; font-size: 0.86rem;" data-i18n="select_papers">
+                            Select &amp; View Papers &rarr;
+                        </a>
+                    </td>
+                    <td style="padding: 1.1rem; border-left: 1px solid var(--border);">
+                        <a href="/scheme/{{ s2.id }}" class="btn-primary" style="display: block; text-align: center; background: #0f766e; padding: 0.55rem 0.8rem; font-size: 0.86rem;" data-i18n="select_papers">
+                            Select &amp; View Papers &rarr;
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+const comparePageDict = {
+    en: {
+        comp_title: "Side-by-Side Scheme Comparison",
+        comp_subtitle: "Compare interest rates, government funding share, grace periods, and project ceilings to choose the best loan for your enterprise.",
+        back_rec: "Back to Recommendations",
+        comp_s1: "Compare Scheme 1:",
+        comp_s2: "Compare Scheme 2:",
+        col_metric: "Statutory Metric (नियम)",
+        row_interest: "Interest Rate (p.a.)",
+        hi_interest: "ब्याज दर (सालाना)",
+        pill_cheaper: "✓ Cheaper",
+        row_govt_share: "Government Funding Share",
+        hi_govt_share: "सरकारी ऋण हिस्सा",
+        up_to: "Up to",
+        pill_higher: "✓ Higher Share",
+        row_margin: "Beneficiary Margin (Own Share)",
+        hi_margin: "खुद की लागत (मार्जिन)",
+        of_project: "of Project Cost",
+        row_moratorium: "Moratorium (Grace Period)",
+        hi_moratorium: "शुरुआती छूट (बिना EMI के महीने)",
+        months_zero_emi: "Months (0 EMI)",
+        pill_grace: "✓ Longer Grace",
+        row_tenure: "Repayment Tenure",
+        hi_tenure: "वापसी की अवधि",
+        months_lbl: "Months",
+        years_lbl: "Years",
+        row_budget: "Allowable Project Budget",
+        hi_budget: "अनुमोदित परियोजना बजट",
+        to_lbl: "to",
+        row_quota: "Target Social Quota",
+        hi_quota: "लक्षित वर्ग एवं श्रेणी",
+        row_action: "Action",
+        hi_action: "योजना का चुनाव करें",
+        select_papers: "Select & View Papers →"
+    },
+    hi: {
+        comp_title: "आमने-सामने योजना तुलना",
+        comp_subtitle: "अपने उद्यम के लिए सबसे अच्छा ऋण चुनने हेतु ब्याज दरों, सरकारी ऋण हिस्से, छूट अवधि और परियोजना लागत सीमा की तुलना करें।",
+        back_rec: "← सिफारिशों पर वापस जाएं",
+        comp_s1: "योजना 1 चुनें:",
+        comp_s2: "योजना 2 चुनें:",
+        col_metric: "वैधानिक मानक (नियम)",
+        row_interest: "Interest Rate (p.a.)",
+        hi_interest: "ब्याज दर (सालाना)",
+        pill_cheaper: "✓ कम ब्याज",
+        row_govt_share: "Government Funding Share",
+        hi_govt_share: "सरकारी ऋण हिस्सा",
+        up_to: "तक",
+        pill_higher: "✓ अधिक हिस्सा",
+        row_margin: "Beneficiary Margin (Own Share)",
+        hi_margin: "खुद की लागत (मार्जिन)",
+        of_project: "परियोजना लागत का",
+        row_moratorium: "Moratorium (Grace Period)",
+        hi_moratorium: "शुरुआती छूट (मोराटोरियम)",
+        months_zero_emi: "महीने (0 EMI)",
+        pill_grace: "✓ लंबी छूट",
+        row_tenure: "Repayment Tenure",
+        hi_tenure: "ऋण वापसी की अवधि",
+        months_lbl: "महीने",
+        years_lbl: "वर्ष",
+        row_budget: "Allowable Project Budget",
+        hi_budget: "स्वीकृत परियोजना बजट",
+        to_lbl: "से",
+        row_quota: "Target Social Quota",
+        hi_quota: "लक्षित सामाजिक कोटा",
+        row_action: "Action",
+        hi_action: "कार्रवाई",
+        select_papers: "चुनें एवं कागजात देखें →"
+    }
+};
+
+function applyComparePageTranslation(lang) {
+    var dict = comparePageDict[lang] || comparePageDict.en;
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n');
+        if (dict[key]) el.innerText = dict[key];
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    var savedLang = localStorage.getItem('schemesathi_lang') || 'en';
+    applyComparePageTranslation(savedLang);
+
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'schemesathi_lang') {
+            applyComparePageTranslation(e.newValue);
+        }
+    });
+});
+</script>
+{% endblock %}

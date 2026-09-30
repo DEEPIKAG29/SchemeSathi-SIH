@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="about-page-wrapper" style="max-width: 1050px; margin: 0 auto; padding: 1.5rem 1rem;">
+  
+  <!-- About Hero Banner -->
+  <section class="about-hero-card" style="text-align: center; padding: 2.5rem 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 2rem; box-shadow: var(--shadow-sm);">
+    <span class="badge" style="background: var(--accent-light); color: var(--primary-accent); padding: 0.35rem 0.8rem; border-radius: 20px; font-weight: 700; font-size: 0.78rem;" data-i18n="about_badge">SMART INDIA HACKATHON 2026</span>
+    <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--text-main); margin: 0.8rem 0 0.5rem;" data-i18n="about_main_title">Simplifying Access to Government Welfare Schemes</h1>
+    <p class="about-lead" style="color: var(--text-muted); font-size: 1.05rem; max-width: 700px; margin: 0 auto; line-height: 1.6;" data-i18n="about_main_lead">
+      SchemeSathi is an intelligent digital platform built to connect micro-entrepreneurs and local artisans directly with official concessional credit without complex paperwork.
+    </p>
+  </section>
+
+  <!-- Problem and Solution Grid -->
+  <section class="about-narrative-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+    <div class="card narrative-box" style="border-top: 4px solid var(--danger); padding: 1.8rem;">
+      <div class="narrative-tag" style="font-size: 0.75rem; font-weight: 800; color: var(--danger); margin-bottom: 0.5rem; letter-spacing: 0.5px;" data-i18n="about_prob_tag">THE CHALLENGE</div>
+      <h3 style="font-size: 1.2rem; color: var(--text-main); margin-bottom: 0.6rem;" data-i18n="about_prob_title">Information Fragmentation &amp; Delays</h3>
+      <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6;" data-i18n="about_prob_desc">
+        India hosts over 60 million micro-enterprises, yet fewer than 15% successfully secure formal financial assistance. Due to scattered portal information and complex channel finance routing, applicants frequently face confusion, misrouted files, and high middleman exploitation.
+      </p>
+    </div>
+
+    <div class="card narrative-box" style="border-top: 4px solid var(--success); padding: 1.8rem;">
+      <div class="narrative-tag" style="font-size: 0.75rem; font-weight: 800; color: var(--success); margin-bottom: 0.5rem; letter-spacing: 0.5px;" data-i18n="about_sol_tag">OUR SOLUTION</div>
+      <h3 style="font-size: 1.2rem; color: var(--text-main); margin-bottom: 0.6rem;" data-i18n="about_sol_title">Deterministic Matching &amp; Safe Routing</h3>
+      <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6;" data-i18n="about_sol_desc">
+        We provide a rule-based scheme recommender, an advanced amortization calculator with moratorium grace periods, and a geospatial partner locator that routes users strictly to Net NPA-safe bank desks.
+      </p>
+    </div>
+  </section>
+
+  <!-- Three Core Pillars with SVG Icons -->
+  <section class="pillars-strip" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.2rem; margin-bottom: 2rem;">
+    
+    <!-- Pillar 1 -->
+    <div class="pillar-item card" style="padding: 1.5rem; text-align: center;">
+      <div class="pillar-icon" style="display: flex; justify-content: center; margin-bottom: 0.6rem; color: var(--primary-accent);">
+        <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <circle cx="12" cy="12" r="6"></circle>
+          <circle cx="12" cy="12" r="2"></circle>
+        </svg>
+      </div>
+      <h4 style="font-size: 1.05rem; color: var(--text-main); margin-bottom: 0.3rem;" data-i18n="pillar1_h">Rule-Based Pre-Screening</h4>
+      <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;" data-i18n="pillar1_p">Instantly evaluates category quotas and income ceilings to guarantee absolute eligibility.</p>
+    </div>
+    
+    <!-- Pillar 2 -->
+    <div class="pillar-item card" style="padding: 1.5rem; text-align: center;">
+      <div class="pillar-icon" style="display: flex; justify-content: center; margin-bottom: 0.6rem; color: var(--success);">
+        <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="2" y1="12" x2="22" y2="12"></line>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+      </div>
+      <h4 style="font-size: 1.05rem; color: var(--text-main); margin-bottom: 0.3rem;" data-i18n="pillar2_h">Bilingual Accessibility</h4>
+      <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;" data-i18n="pillar2_p">Seamless non-refresh switching between English and Shuddh Hindi for complete inclusivity.</p>
+    </div>
+    
+    <!-- Pillar 3 -->
+    <div class="pillar-item card" style="padding: 1.5rem; text-align: center;">
+      <div class="pillar-icon" style="display: flex; justify-content: center; margin-bottom: 0.6rem; color: #d97706;">
+        <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+      </div>
+      <h4 style="font-size: 1.05rem; color: var(--text-main); margin-bottom: 0.3rem;" data-i18n="pillar3_h">Prudential Bank Routing</h4>
+      <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;" data-i18n="pillar3_p">Calculates real road-driving routes to active bank branches while filtering out high NPA risks.</p>
+    </div>
+
+  </section>
+
+  <!-- Team Members Grid with Coordinated SVG Avatars -->
+  <section class="card team-showcase-section" style="padding: 2rem; text-align: center;">
+    <div class="team-header" style="margin-bottom: 1.8rem;">
+      <span class="badge" style="background: #fef3c7; color: #b45309; padding: 0.3rem 0.7rem; border-radius: 20px; font-weight: 700; font-size: 0.75rem;">PROJECT CREATORS</span>
+      <h2 style="font-size: 1.5rem; color: var(--text-main); margin: 0.5rem 0 0.2rem;" data-i18n="team_title">Team Diamond</h2>
+      <p style="color: var(--text-muted); font-size: 0.88rem;" data-i18n="team_sub">Bipin Tripathi Kumaon Institute of Technology (BTKIT Dwarahat) • BCA First Year Students</p>
+    </div>
+
+    <div class="team-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem;">
+      
+      <!-- Deepika -->
+      <div class="team-card" style="background: var(--bg-page); border: 1px solid var(--border); padding: 1.2rem; border-radius: var(--radius-sm);">
+        <div class="avatar-circle" style="width: 48px; height: 48px; background: var(--accent-light); color: var(--primary-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem;">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="var(--primary-accent)">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+          </svg>
+        </div>
+        <h4 style="font-size: 0.92rem; color: var(--text-main); font-weight: 700;">Deepika</h4>
+      </div>
+
+      <!-- Sonali Mathpal -->
+      <div class="team-card" style="background: var(--bg-page); border: 1px solid var(--border); padding: 1.2rem; border-radius: var(--radius-sm);">
+        <div class="avatar-circle" style="width: 48px; height: 48px; background: var(--accent-light); color: var(--primary-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem;">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="var(--primary-accent)">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+          </svg>
+        </div>
+        <h4 style="font-size: 0.92rem; color: var(--text-main); font-weight: 700;">Sonali Mathpal</h4>
+      </div>
+
+      <!-- Karan Bisht -->
+      <div class="team-card" style="background: var(--bg-page); border: 1px solid var(--border); padding: 1.2rem; border-radius: var(--radius-sm);">
+        <div class="avatar-circle" style="width: 48px; height: 48px; background: var(--accent-light); color: var(--primary-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem;">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="var(--primary-accent)">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+          </svg>
+        </div>
+        <h4 style="font-size: 0.92rem; color: var(--text-main); font-weight: 700;">Karan Bisht</h4>
+      </div>
+
+      <!-- Nitin Kumar -->
+      <div class="team-card" style="background: var(--bg-page); border: 1px solid var(--border); padding: 1.2rem; border-radius: var(--radius-sm);">
+        <div class="avatar-circle" style="width: 48px; height: 48px; background: var(--accent-light); color: var(--primary-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem;">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="var(--primary-accent)">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+          </svg>
+        </div>
+        <h4 style="font-size: 0.92rem; color: var(--text-main); font-weight: 700;">Nitin Kumar</h4>
+      </div>
+
+      <!-- Vishal Dev -->
+      <div class="team-card" style="background: var(--bg-page); border: 1px solid var(--border); padding: 1.2rem; border-radius: var(--radius-sm);">
+        <div class="avatar-circle" style="width: 48px; height: 48px; background: var(--accent-light); color: var(--primary-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem;">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="var(--primary-accent)">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+          </svg>
+        </div>
+        <h4 style="font-size: 0.92rem; color: var(--text-main); font-weight: 700;">Vishal Dev</h4>
+      </div>
+
+      <!-- Ganesh Singh Bisht -->
+      <div class="team-card" style="background: var(--bg-page); border: 1px solid var(--border); padding: 1.2rem; border-radius: var(--radius-sm);">
+        <div class="avatar-circle" style="width: 48px; height: 48px; background: var(--accent-light); color: var(--primary-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem;">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="var(--primary-accent)">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+          </svg>
+        </div>
+        <h4 style="font-size: 0.92rem; color: var(--text-main); font-weight: 700;">Ganesh S. Bisht</h4>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+
+<script>
+const aboutPageDict = {
+    en: {
+        about_badge: "SMART INDIA HACKATHON 2026",
+        about_main_title: "Simplifying Access to Government Welfare Schemes",
+        about_main_lead: "SchemeSathi is an intelligent digital platform built to connect micro-entrepreneurs and local artisans directly with official concessional credit without complex paperwork.",
+        about_prob_tag: "THE CHALLENGE",
+        about_prob_title: "Information Fragmentation & Delays",
+        about_prob_desc: "India hosts over 60 million micro-enterprises, yet fewer than 15% successfully secure formal financial assistance. Due to scattered portal information and complex channel finance routing, applicants frequently face confusion, misrouted files, and high middleman exploitation.",
+        about_sol_tag: "OUR SOLUTION",
+        about_sol_title: "Deterministic Matching & Safe Routing",
+        about_sol_desc: "We provide a rule-based scheme recommender, an advanced amortization calculator with moratorium grace periods, and a geospatial partner locator that routes users strictly to Net NPA-safe bank desks.",
+        pillar1_h: "Rule-Based Pre-Screening",
+        pillar1_p: "Instantly evaluates category quotas and income ceilings to guarantee absolute eligibility.",
+        pillar2_h: "Bilingual Accessibility",
+        pillar2_p: "Seamless non-refresh switching between English and Shuddh Hindi for complete inclusivity.",
+        pillar3_h: "Prudential Bank Routing",
+        pillar3_p: "Calculates real road-driving routes to active bank branches while filtering out high NPA risks.",
+        team_title: "Team Diamond",
+        team_sub: "Bipin Tripathi Kumaon Institute of Technology (BTKIT Dwarahat) • BCA First Year Students"
+    },
+    hi: {
+        about_badge: "स्मार्ट इंडिया हैकथॉन 2026",
+        about_main_title: "सरकारी कल्याणकारी योजनाओं तक आसान पहुंच",
+        about_main_lead: "स्कीमसाथी (SchemeSathi) एक बुद्धिमत्तापूर्ण डिजिटल प्लेटफॉर्म है जिसे सूक्ष्म उद्यमियों और स्थानीय कारीगरों को बिना किसी जटिल कागजी कार्रवाई के आधिकारिक रियायती ऋण से सीधे जोड़ने के लिए बनाया गया है।",
+        about_prob_tag: "मुख्य चुनौती",
+        about_prob_title: "सूचना का बिखराव और देरी",
+        about_prob_desc: "भारत में 60 मिलियन से अधिक सूक्ष्म उद्यम हैं, फिर भी 15% से कम को औपचारिक वित्तीय सहायता मिल पाती है। पोर्टल की जानकारी बिखरी होने और जटिल चैनल वित्त रूटिंग के कारण, आवेदकों को अक्सर भ्रम, गलत रूट की गई फाइलें और बिचौलियों के शोषण का सामना करना पड़ता है।",
+        about_sol_tag: "हमारा समाधान",
+        about_sol_title: "सटीक मिलान और सुरक्षित रूटिंग",
+        about_sol_desc: "हम एक नियम-आधारित योजना अनुशंसाक, मोराटोरियम छूट अवधि के साथ एक उन्नत परिशोधन कैलकुलेटर, और एक भू-स्थानिक पार्टनर लोकेटर प्रदान करते हैं जो उपयोगकर्ताओं को कड़ाई से सुरक्षित बैंक डेस्क पर भेजता है।",
+        pillar1_h: "नियम-आधारित पूर्व-सत्यापन",
+        pillar1_p: "पूर्ण पात्रता सुनिश्चित करने के लिए श्रेणी कोटे और आय सीमाओं का तुरंत मूल्यांकन करता है।",
+        pillar2_h: "द्विभाषी पहुंच",
+        pillar2_p: "पूर्ण समावेशिता के लिए अंग्रेजी और शुद्ध हिंदी के बीच बिना रीफ्रेश किए तुरंत स्विच करने की सुविधा।",
+        pillar3_h: "विवेकपूर्ण बैंक रूटिंग",
+        pillar3_p: "उच्च एनपीए जोखिमों को फ़िल्टर करते हुए सक्रिय बैंक शाखाओं के लिए वास्तविक सड़क-ड्राइविंग मार्गों की गणना करता है।",
+        team_title: "टीम डायमंड",
+        team_sub: "बिपीन त्रिपाठी कुमाऊं प्रौद्योगिकी संस्थान (BTKIT द्वारहाट) • बीसीए प्रथम वर्ष के छात्र"
+    }
+};
+
+function applyAboutPageTranslation(lang) {
+    var dict = aboutPageDict[lang] || aboutPageDict.en;
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n');
+        if (dict[key]) el.innerText = dict[key];
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    var savedLang = localStorage.getItem('schemesathi_lang') || 'en';
+    applyAboutPageTranslation(savedLang);
+
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'schemesathi_lang') {
+            applyAboutPageTranslation(e.newValue);
+        }
+    });
+});
+</script>
+{% endblock %}
