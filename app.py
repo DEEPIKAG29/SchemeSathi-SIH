@@ -250,9 +250,9 @@ def home():
 def about():
     return render_template("about.html")
 
-@app.route("/how-it-works")
+@app.route('/how-it-works')
 def how_it_works():
-    return render_template("how_it_works.html")
+    return render_template('how_it_works.html')
 
 
 @app.route("/profile", methods=["GET", "POST"])
